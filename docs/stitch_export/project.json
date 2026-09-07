@@ -1,0 +1,333 @@
+{
+  "name": "projects/15139587154950123034",
+  "title": "HeatScape: Urban Heat Intelligence Platform",
+  "visibility": "PRIVATE",
+  "createTime": "2026-09-07T17:07:29.552225Z",
+  "updateTime": "2026-09-07T18:13:56.341915Z",
+  "projectType": "TEXT_TO_UI_PRO",
+  "thumbnailScreenshot": {
+    "name": "projects/15139587154950123034/screens/ffd8da031f392b082ea87fee9254ff6c25680d1ded2346a3ae5436ed148b817c/fileEntries/screenshot",
+    "downloadUrl": "https://lh3.googleusercontent.com/aida/AEtjO1WO9RnHUnBZXSoDYiwq6GOysyWLXedjLXz-LEDp5s1tkDl6ouiAIUVRvSO3Xy_MD_14nuTZc6tpAgaTG5ZBsGs4xua2n4U4Ik75aBKxtEgKEdOkm3PtuXJ9TjXuFV4gc9_ynFjx2DNaBE_CQflBlANCmOid2zgXyMuP2BOYC8TlMUOCCXRid3TIfW98GW5puuKa0C0acav8yaFN8R6WZNdh9AOEMbA6sihx77BUE7bYsW6RwfUQIqUSkC_9"
+  },
+  "origin": "STITCH",
+  "deviceType": "DESKTOP",
+  "designTheme": {
+    "colorMode": "DARK",
+    "font": "INTER",
+    "customColor": "#f38020",
+    "headlineFont": "INTER",
+    "bodyFont": "INTER",
+    "labelFont": "JETBRAINS_MONO",
+    "namedColors": {
+      "tertiary": "#ffb77d",
+      "secondary_container": "#00a572",
+      "tertiary_fixed": "#ffdcc3",
+      "inverse_on_surface": "#213145",
+      "on_error_container": "#ffdad6",
+      "error": "#ffb4ab",
+      "inverse_primary": "#964900",
+      "surface_variant": "#26364a",
+      "on_tertiary": "#4d2600",
+      "on_error": "#690005",
+      "on_secondary": "#003824",
+      "on_primary_container": "#592900",
+      "background": "#031427",
+      "on_tertiary_fixed_variant": "#6e3900",
+      "tertiary_fixed_dim": "#ffb77d",
+      "on_surface": "#d3e4fe",
+      "on_background": "#d3e4fe",
+      "primary_fixed_dim": "#ffb787",
+      "surface_container_high": "#1b2b3f",
+      "on_tertiary_fixed": "#2f1500",
+      "surface_tint": "#ffb787",
+      "inverse_surface": "#d3e4fe",
+      "on_primary": "#502400",
+      "surface_container_low": "#0b1c30",
+      "error_container": "#93000a",
+      "primary_container": "#f38020",
+      "primary": "#ffb787",
+      "on_tertiary_container": "#552b00",
+      "secondary": "#4edea3",
+      "surface_container": "#102034",
+      "on_secondary_container": "#00311f",
+      "surface_container_highest": "#26364a",
+      "outline": "#a58c7d",
+      "on_secondary_fixed_variant": "#005236",
+      "tertiary_container": "#eb851c",
+      "on_primary_fixed": "#311300",
+      "secondary_fixed_dim": "#4edea3",
+      "primary_fixed": "#ffdcc7",
+      "on_primary_fixed_variant": "#723600",
+      "outline_variant": "#564336",
+      "on_secondary_fixed": "#002113",
+      "surface_bright": "#2a3a4f",
+      "secondary_fixed": "#6ffbbe",
+      "surface_container_lowest": "#000f21",
+      "surface": "#031427",
+      "on_surface_variant": "#ddc1b1",
+      "surface_dim": "#031427"
+    },
+    "designMd": "---\nname: Technical Precision Dark\ncolors:\n  surface: '#031427'\n  surface-dim: '#031427'\n  surface-bright: '#2a3a4f'\n  surface-container-lowest: '#000f21'\n  surface-container-low: '#0b1c30'\n  surface-container: '#102034'\n  surface-container-high: '#1b2b3f'\n  surface-container-highest: '#26364a'\n  on-surface: '#d3e4fe'\n  on-surface-variant: '#ddc1b1'\n  inverse-surface: '#d3e4fe'\n  inverse-on-surface: '#213145'\n  outline: '#a58c7d'\n  outline-variant: '#564336'\n  surface-tint: '#ffb787'\n  primary: '#ffb787'\n  on-primary: '#502400'\n  primary-container: '#f38020'\n  on-primary-container: '#592900'\n  inverse-primary: '#964900'\n  secondary: '#4edea3'\n  on-secondary: '#003824'\n  secondary-container: '#00a572'\n  on-secondary-container: '#00311f'\n  tertiary: '#ffb77d'\n  on-tertiary: '#4d2600'\n  tertiary-container: '#eb851c'\n  on-tertiary-container: '#552b00'\n  error: '#ffb4ab'\n  on-error: '#690005'\n  error-container: '#93000a'\n  on-error-container: '#ffdad6'\n  primary-fixed: '#ffdcc7'\n  primary-fixed-dim: '#ffb787'\n  on-primary-fixed: '#311300'\n  on-primary-fixed-variant: '#723600'\n  secondary-fixed: '#6ffbbe'\n  secondary-fixed-dim: '#4edea3'\n  on-secondary-fixed: '#002113'\n  on-secondary-fixed-variant: '#005236'\n  tertiary-fixed: '#ffdcc3'\n  tertiary-fixed-dim: '#ffb77d'\n  on-tertiary-fixed: '#2f1500'\n  on-tertiary-fixed-variant: '#6e3900'\n  background: '#031427'\n  on-background: '#d3e4fe'\n  surface-variant: '#26364a'\ntypography:\n  headline-xl:\n    fontFamily: Inter\n    fontSize: 32px\n    fontWeight: '700'\n    lineHeight: 40px\n    letterSpacing: -0.02em\n  headline-lg:\n    fontFamily: Inter\n    fontSize: 24px\n    fontWeight: '600'\n    lineHeight: 32px\n    letterSpacing: -0.015em\n  headline-md:\n    fontFamily: Inter\n    fontSize: 18px\n    fontWeight: '600'\n    lineHeight: 24px\n    letterSpacing: -0.01em\n  headline-sm:\n    fontFamily: Inter\n    fontSize: 14px\n    fontWeight: '600'\n    lineHeight: 20px\n    letterSpacing: 0em\n  body-lg:\n    fontFamily: Inter\n    fontSize: 16px\n    fontWeight: '400'\n    lineHeight: 24px\n    letterSpacing: 0em\n  body-md:\n    fontFamily: Inter\n    fontSize: 13px\n    fontWeight: '400'\n    lineHeight: 18px\n    letterSpacing: 0em\n  body-sm:\n    fontFamily: Inter\n    fontSize: 11px\n    fontWeight: '400'\n    lineHeight: 16px\n    letterSpacing: 0.01em\n  label-lg:\n    fontFamily: JetBrains Mono\n    fontSize: 13px\n    fontWeight: '500'\n    lineHeight: 18px\n    letterSpacing: 0.02em\n  label-md:\n    fontFamily: JetBrains Mono\n    fontSize: 11px\n    fontWeight: '500'\n    lineHeight: 16px\n    letterSpacing: 0.04em\n  label-sm:\n    fontFamily: JetBrains Mono\n    fontSize: 10px\n    fontWeight: '500'\n    lineHeight: 14px\n    letterSpacing: 0.05em\n  telemetry-xl:\n    fontFamily: JetBrains Mono\n    fontSize: 28px\n    fontWeight: '700'\n    lineHeight: 32px\n    letterSpacing: -0.02em\n  telemetry-lg:\n    fontFamily: JetBrains Mono\n    fontSize: 20px\n    fontWeight: '600'\n    lineHeight: 24px\n    letterSpacing: 0em\n  telemetry-md:\n    fontFamily: JetBrains Mono\n    fontSize: 14px\n    fontWeight: '600'\n    lineHeight: 18px\n    letterSpacing: 0em\nspacing:\n  space-xxs: 0.125rem\n  space-xs: 0.25rem\n  space-sm: 0.5rem\n  space-md: 0.75rem\n  space-lg: 1rem\n  space-xl: 1.5rem\n  space-2xl: 2rem\n  gutter-canvas: 0.75rem\n  panel-width-sm: 20rem\n  panel-width-md: 26rem\n  panel-width-lg: 32rem\n---\n\n## Brand & Style\n\nThis design system establishes an operational, mission-critical workspace for environmental engineers, urban planners, and civic administrators addressing extreme thermal risks. The aesthetic is strictly utilitarian, uncompromising, and technical\u2014rooted in the visual language of CAD software, orbital telemetry stations, and geographic information systems (GIS).\n\nEvery visual choice prioritizes data density, spatial legibility, and rapid decision-making under operational conditions. Visual embellishments such as soft organic drop shadows, skeuomorphic surface gradients, and decorative iconography are excluded in favor of high-contrast boundaries, structural alignment grids, and dense numeric telemetry.\n\nKey visual attributes:\n- **Zero-Radius Architecture**: Pure planar surfaces with razor-sharp corners to emulate industrial instrumentation screens and physical plotting devices.\n- **Instrument Density**: Compact vertical spacing, micro-tabular typography, and monospaced structural metadata maximize screen real estate for concurrent spatial visualizers and analytical sidebars.\n- **Chromatically Isolated Alerts**: Color is strictly functional; saturated chromatic values are reserved solely for heat anomalies, spatial vector trajectories, and interactive target indicators.\n\n## Colors\n\nThe palette operates on a calibrated luminance scale anchored in dark oceanic slate. The ambient background (#0F172A) recedes to prevent eye fatigue during prolonged operations, while elevated analytical panels (#1E293B) and structural dividers (#334155) enforce physical boundaries.\n\n### State & Anomaly Semantics\nThermal trajectory classifications dictate operational resource allocation across ward jurisdictions:\n- **Primary / Emerging Alert (`#F38020`)**: Immediate thermal spikes, unmitigated surface anomalies, and primary action triggers. High visual vibration against slate backgrounds.\n- **Persistent Hotspot (`#D97706`)**: Chronic multi-season heat retention zones requiring permanent structural intervention.\n- **Improving / Remediated (`#10B981`)**: Measurable surface cooling, canopy expansion, and albedo mitigation success.\n- **Watch / Baseline (`#64748B`)**: Nominal sensory feeds, stable ambient conditions, inactive grid cells, and structural boundary lines.\n\n### Functional Roles\n- **Base Canvas**: `#0F172A` (Deep Slate)\n- **Grid Overlay (Spatial Guides)**: `#1E293B` (1px stroke representing calibrated ground-distance increments)\n- **Panel / Surface Container**: `#1E293B` (Dark Charcoal)\n- **Structural Stroke / Hairline**: `#334155` (Slate Stroke)\n- **Interactive Focus / Selection**: `#F38020` (Orange)\n- **High-Contrast Text**: `#F8FAFC` (Slate 50)\n- **Secondary Data Text**: `#94A3B8` (Slate 400)\n\n## Typography\n\nThe typographic hierarchy enforces a strict division of cognitive processing:\n\n1. **System & Narrative Layer (Inter)**: Applied to conversational labels, qualitative analysis, narrative tooltips, column headers, and administrative actions. Clean, neutral, high-density legibility.\n2. **Computational Layer (Monospace / JetBrains Mono / IBM Plex Mono style)**: Applied to all non-textual data points: GIS coordinates (Lat/Long), ward identification codes (`W-172-CHN`), land surface temperature readings (`\u00b0C`), thermal albedo coefficients, and budget allocations. All numbers must render in tabular lining figures (`font-variant-numeric: tabular-nums`) to prevent horizontal jitter during live telemetry updates.\n\nAll label styles use uppercase transformations with wide character tracking (`0.04em` to `0.05em`) when rendered at or below 11px to ensure legibility on low-brightness control room displays.\n\n## Layout & Spacing\n\nThis system implements a spatial cockpit model rather than a standard consumer page grid. The viewport is divided into continuous analytical panels and an underlying GIS map canvas.\n\n### Layout Model\n- **Viewport Anchor**: Fixed `100vh`/`100vw` boundary without root document scrolling.\n- **HUD Shell Architecture**: Collapsible left-hand contextual tool panels (`panel-width-md`), anchored floating telemetry status bars, and floating or docked inspector drawers on the right (`panel-width-lg`).\n- **Cartesian Grid Matrix**: An underlying visual 100m ground-scale reference grid drawn with 1px `#1E293B` lines over `#0F172A` map canvases. Spacing calculations inside UI widgets align strictly to increments of `0.25rem` (4px).\n\n### Responsive Adaptation\n- **Desktop (>1440px)**: Full multi-pane analytical layout. Map canvas primary, dual sidebars pinned, real-time telemetry stream across bottom ribbon.\n- **Workstation (1024px \u2013 1439px)**: Right panel transitions into an overlay drawer. Left navigation shrinks to iconography + compact labels.\n- **Field Terminal (<1023px)**: Single-pane focus. Map canvas fills viewport; bottom navigation sheet expands vertically to reveal telemetry data tables; tool panels become modal overlays.\n\n## Elevation & Depth\n\nVisual depth is achieved exclusively through **planar stratification** and **hairline edge definition**, completely rejecting ambient dropshadows, blur filters, or skeuomorphic bevels.\n\n### The Planar Hierarchy\n- **Layer 0 (Base Map / Spatial Canvas)**: `#0F172A` with `#1E293B` Cartesian line overlay.\n- **Layer 1 (Docked Structural Sidebars & Toolbars)**: `#1E293B` solid fill, delineated by a rigid `1px solid #334155` border on all exposed edges.\n- **Layer 2 (Floating Overlays, Contextual Menus, HUD Badges)**: `#0F172A` container with a `1px solid #F38020` active border or `1px solid #64748B` passive border. Zero shadow blur.\n- **Layer 3 (Modals & Critical System Overlays)**: `#0F172A` backed by a `rgba(15, 23, 42, 0.85)` non-blurred veil with an authoritative `1px solid #F38020` framing stroke.\n\nDepth is communicated by border luminosity: passive background panels use dark slate strokes (`#334155`), while focused, active, or high-priority layers employ high-contrast amber or orange hairlines (`#F38020`).\n\n## Shapes\n\nThe shape vocabulary is strictly orthogonal. All corner radii across containers, buttons, badges, popovers, and input fields are explicitly set to `0px`.\n\nThis zero-radius standard reinforces the mechanical, CAD-like precision of the platform. Intersecting panels create flush junction lines, and multi-component groups (e.g., segmented toggles, button groups, combined numeric inputs) assemble seamlessly like physical modular hardware modules. Chamfers (45-degree angle corner cuts of 4px) are permitted exclusively on primary telemetry callout badges to evoke spatial data cards.\n\n## Components\n\n### Action Components (Buttons)\n- **Primary Action**: Sharp rect, background `#F38020`, label in bold monospace `#0F172A`, 1px solid `#F38020`. Hover: background `#D97706`.\n- **Secondary / Metric Action**: Sharp rect, background `#1E293B`, 1px solid `#334155`, label in `#F8FAFC`. Hover: 1px solid `#F38020`, text `#F38020`.\n- **Destructive / High Alert**: Sharp rect, background transparent, 1px solid `#EF4444`, text `#EF4444`.\n\n### Status Indicators & Trajectory Chips\n- Compact, squared-off tags with a 1px border.\n- Layout: 6px colored indicator square + uppercase label in `label-sm` monospace.\n- Variants:\n  - *Emerging*: Border `#F38020`, background `rgba(243, 128, 32, 0.1)`, indicator `#F38020`.\n  - *Persistent*: Border `#D97706`, background `rgba(217, 119, 6, 0.1)`, indicator `#D97706`.\n  - *Improving*: Border `#10B981`, background `rgba(16, 185, 129, 0.1)`, indicator `#10B981`.\n  - *Watch*: Border `#64748B`, background `rgba(100, 116, 139, 0.1)`, indicator `#64748B`.\n\n### Data Displays & Telemetry Cards\n- Surface: Solid `#1E293B`, framed with `1px solid #334155`.\n- Header: Monospace, small uppercase `label-md` accompanied by an inline status dot or coordinate stamp.\n- Metric readout: `telemetry-xl` in `#F8FAFC` paired with an engineering unit suffix (e.g., `42.8 \u00b0C`, `0.18 ALBEDO`).\n- No inner card drop shadows. Division between card rows uses 1px solid `#334155` rules.\n\n### Input Fields & Selectors\n- Background: `#0F172A`, border: `1px solid #334155`, text: `#F8FAFC`, font: `Inter 13px`.\n- Focus State: Border snaps to `1px solid #F38020` without external glow rings.\n- Monospace Data Inputs: Used for coordinates, ward numbers, and numeric range entries (`JetBrains Mono`).\n\n### Selection Controls (Checkboxes & Radios)\n- **Checkbox**: 14x14px square, sharp corners. Unchecked: `1px solid #64748B`, background `#0F172A`. Checked: background `#F38020`, border `#F38020`, tick `#0F172A`.\n- **Radio Button**: 14x14px sharp square (diamond rotation optional, default is square-in-square). Checked: Inner 6x6px solid square fill of `#F38020`.\n\n### Spatial Crosshair & Cell Inspectors\n- Dedicated map HUD element: Fixed crosshair with micro-coordinates dynamically updating in `label-sm` above the cursor.\n- Grid Cell Hover: 1px `#F38020` stroke bounding box around the targeted 100m spatial cell, with instant diagnostic HUD tooltip docked to the upper-right corner of the cell boundary.",
+    "colorVariant": "FIDELITY",
+    "overridePrimaryColor": "#f38020",
+    "overrideSecondaryColor": "#10b981",
+    "overrideTertiaryColor": "#d97706",
+    "overrideNeutralColor": "#64748b",
+    "spacingScale": 2,
+    "typography": {
+      "headline-md": {
+        "fontFamily": "Inter",
+        "fontSize": "18px",
+        "fontWeight": "600",
+        "lineHeight": "24px",
+        "letterSpacing": "-0.01em"
+      },
+      "body-sm": {
+        "fontFamily": "Inter",
+        "fontSize": "11px",
+        "fontWeight": "400",
+        "lineHeight": "16px",
+        "letterSpacing": "0.01em"
+      },
+      "body-md": {
+        "fontFamily": "Inter",
+        "fontSize": "13px",
+        "fontWeight": "400",
+        "lineHeight": "18px",
+        "letterSpacing": "0em"
+      },
+      "label-sm": {
+        "fontFamily": "JetBrains Mono",
+        "fontSize": "10px",
+        "fontWeight": "500",
+        "lineHeight": "14px",
+        "letterSpacing": "0.05em"
+      },
+      "telemetry-md": {
+        "fontFamily": "JetBrains Mono",
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "lineHeight": "18px",
+        "letterSpacing": "0em"
+      },
+      "headline-xl": {
+        "fontFamily": "Inter",
+        "fontSize": "32px",
+        "fontWeight": "700",
+        "lineHeight": "40px",
+        "letterSpacing": "-0.02em"
+      },
+      "telemetry-lg": {
+        "fontFamily": "JetBrains Mono",
+        "fontSize": "20px",
+        "fontWeight": "600",
+        "lineHeight": "24px",
+        "letterSpacing": "0em"
+      },
+      "headline-lg": {
+        "fontFamily": "Inter",
+        "fontSize": "24px",
+        "fontWeight": "600",
+        "lineHeight": "32px",
+        "letterSpacing": "-0.015em"
+      },
+      "label-lg": {
+        "fontFamily": "JetBrains Mono",
+        "fontSize": "13px",
+        "fontWeight": "500",
+        "lineHeight": "18px",
+        "letterSpacing": "0.02em"
+      },
+      "headline-sm": {
+        "fontFamily": "Inter",
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "lineHeight": "20px",
+        "letterSpacing": "0em"
+      },
+      "label-md": {
+        "fontFamily": "JetBrains Mono",
+        "fontSize": "11px",
+        "fontWeight": "500",
+        "lineHeight": "16px",
+        "letterSpacing": "0.04em"
+      },
+      "body-lg": {
+        "fontFamily": "Inter",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "lineHeight": "24px",
+        "letterSpacing": "0em"
+      },
+      "telemetry-xl": {
+        "fontFamily": "JetBrains Mono",
+        "fontSize": "28px",
+        "fontWeight": "700",
+        "lineHeight": "32px",
+        "letterSpacing": "-0.02em"
+      }
+    },
+    "spacing": {
+      "panel-width-sm": "20rem",
+      "space-md": "0.75rem",
+      "space-2xl": "2rem",
+      "panel-width-lg": "32rem",
+      "space-sm": "0.5rem",
+      "gutter-canvas": "0.75rem",
+      "panel-width-md": "26rem",
+      "space-lg": "1rem",
+      "space-xs": "0.25rem",
+      "space-xl": "1.5rem",
+      "space-xxs": "0.125rem"
+    },
+    "headlineFontFamily": "Inter",
+    "bodyFontFamily": "Inter",
+    "labelFontFamily": "JetBrains Mono"
+  },
+  "screenInstances": [
+    {
+      "id": "14a7048cd89e405f9460ae5680950320",
+      "sourceScreen": "projects/15139587154950123034/screens/14a7048cd89e405f9460ae5680950320",
+      "x": 5964,
+      "y": 6153,
+      "width": 1280,
+      "height": 1148,
+      "hidden": true
+    },
+    {
+      "id": "2a49c70ad3a047159aec2f55db78d09c",
+      "sourceScreen": "projects/15139587154950123034/screens/2a49c70ad3a047159aec2f55db78d09c",
+      "x": 7308,
+      "y": 6153,
+      "width": 1280,
+      "height": 1715,
+      "hidden": true
+    },
+    {
+      "id": "50179572c6f74376a946be5d6ee6e206",
+      "sourceScreen": "projects/15139587154950123034/screens/50179572c6f74376a946be5d6ee6e206",
+      "x": 3712,
+      "y": 1629,
+      "width": 1280,
+      "height": 1422
+    },
+    {
+      "id": "5b352d5572b0475484671327cf2aa7bc",
+      "sourceScreen": "projects/15139587154950123034/screens/5b352d5572b0475484671327cf2aa7bc",
+      "x": 5510,
+      "y": 6153,
+      "width": 390,
+      "height": 390,
+      "hidden": true
+    },
+    {
+      "id": "5dfaaeb98f4540a685aa117fd3f36e4f",
+      "sourceScreen": "projects/15139587154950123034/screens/5dfaaeb98f4540a685aa117fd3f36e4f",
+      "x": 4288,
+      "width": 1280,
+      "height": 1373,
+      "hidden": true
+    },
+    {
+      "id": "757fd42c1a0e4f9e9cab00350f868727",
+      "sourceScreen": "projects/15139587154950123034/screens/757fd42c1a0e4f9e9cab00350f868727",
+      "x": 2368,
+      "y": 1629,
+      "width": 1280,
+      "height": 1024,
+      "isResized": true
+    },
+    {
+      "id": "889a26e9df0a44229ea47f0a7b42c6e1",
+      "sourceScreen": "projects/15139587154950123034/screens/889a26e9df0a44229ea47f0a7b42c6e1",
+      "y": 4297,
+      "width": 1280,
+      "height": 1024
+    },
+    {
+      "id": "af45e5a16d1c46b48697266537fd482d",
+      "sourceScreen": "projects/15139587154950123034/screens/af45e5a16d1c46b48697266537fd482d",
+      "x": 1600,
+      "width": 1280,
+      "height": 1147,
+      "hidden": true
+    },
+    {
+      "id": "assets_24dedfe03620441d83a70383172afff2",
+      "y": 6153,
+      "width": 960,
+      "height": 540,
+      "hidden": true,
+      "sourceAsset": "assets/24dedfe03620441d83a70383172afff2",
+      "type": "DESIGN_SYSTEM_INSTANCE"
+    },
+    {
+      "id": "assets_8c0dee1fdfab485b8ce0e99f53798bb1",
+      "width": 960,
+      "height": 540,
+      "hidden": true,
+      "sourceAsset": "assets/8c0dee1fdfab485b8ce0e99f53798bb1",
+      "type": "DESIGN_SYSTEM_INSTANCE"
+    },
+    {
+      "id": "assets_c7789820044a4fd796242bb8c589d788",
+      "y": 1629,
+      "width": 960,
+      "height": 540,
+      "sourceAsset": "assets/c7789820044a4fd796242bb8c589d788",
+      "type": "DESIGN_SYSTEM_INSTANCE"
+    },
+    {
+      "id": "b0ae3d334eaa45dc8c939d64d3b6ec90",
+      "sourceScreen": "projects/15139587154950123034/screens/b0ae3d334eaa45dc8c939d64d3b6ec90",
+      "x": 1344,
+      "y": 4297,
+      "width": 1280,
+      "height": 1600
+    },
+    {
+      "id": "c2c3b5a61f2f4873976083b70a2bb5e3",
+      "sourceScreen": "projects/15139587154950123034/screens/c2c3b5a61f2f4873976083b70a2bb5e3",
+      "x": 1024,
+      "y": 1629,
+      "width": 1280,
+      "height": 2412
+    },
+    {
+      "id": "d5c6e6e58e964b8c8b658e902e5f948a",
+      "sourceScreen": "projects/15139587154950123034/screens/d5c6e6e58e964b8c8b658e902e5f948a",
+      "x": 5056,
+      "y": 1629,
+      "width": 1280,
+      "height": 1024
+    },
+    {
+      "id": "dd841af34b2743728a7559ad55bf81c7",
+      "sourceScreen": "projects/15139587154950123034/screens/dd841af34b2743728a7559ad55bf81c7",
+      "x": 1024,
+      "width": 512,
+      "height": 132,
+      "hidden": true
+    },
+    {
+      "id": "eae8cd5d77474ac5b3b1f0fdfea2d80b",
+      "sourceScreen": "projects/15139587154950123034/screens/eae8cd5d77474ac5b3b1f0fdfea2d80b",
+      "x": 2944,
+      "width": 1280,
+      "height": 1024,
+      "hidden": true
+    },
+    {
+      "id": "f1152f826bdd48c997fe0e9ae487ef32",
+      "sourceScreen": "projects/15139587154950123034/screens/f1152f826bdd48c997fe0e9ae487ef32",
+      "x": 4166,
+      "y": 6153,
+      "width": 1280,
+      "height": 1608,
+      "hidden": true
+    }
+  ],
+  "metadata": {
+    "userRole": "OWNER"
+  }
+}

@@ -1,0 +1,361 @@
+{
+  "screenshot": {
+    "name": "projects/15139587154950123034/screens/757fd42c1a0e4f9e9cab00350f868727/fileEntries/screenshot",
+    "downloadUrl": "https://lh3.googleusercontent.com/aida/AEtjO1WVZWxXnZMRGyolKDp5n79mR5W6LrRKVpxINd3Btw3nCY3nQhVaVACOAsZPkDtqb2BAJWExeMM1sUVUZoSzN4M2KPsa0JYxr8jJ7ZVJFXVXqxtU_Xc44rkjIbTqNfJ3MukQsBJETZJXOh7-gx1Jyerx7ZCaSBtdVAWCyhRveYUb81t2fqnMPe-jUTgldZ6dpJGW1nFu6FOZfz4lfVOeIaYeV_Rlu_uWXki3Q9Kt9gyVLhmfYTUgGF-OIeIn"
+  },
+  "htmlCode": {
+    "name": "projects/15139587154950123034/screens/757fd42c1a0e4f9e9cab00350f868727/fileEntries/html",
+    "downloadUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ8Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpbCiVodG1sXzAwMDY1YWU3YjhlOWQ1MGYwNTc2MmY2ZGEyMWZhNjJlEgsSBxDE4Pr32AQYAZIBJAoKcHJvamVjdF9pZBIWQhQxNTEzOTU4NzE1NDk1MDEyMzAzNA&filename=&opi=89354086",
+    "mimeType": "text/html"
+  },
+  "id": "757fd42c1a0e4f9e9cab00350f868727",
+  "generatedBy": "figaro_agent",
+  "width": "2560",
+  "height": "2048",
+  "title": "HeatScape - Clean Trajectory Explorer",
+  "prompt": "Redesign the Trajectory Map Explorer into an intuitive, decluttered Cloudflare & shadcn/ui inspired spatial workspace.\nLayout & Structure:\n1. Floating Modern Map Controls & Search Bar:\n   - Clean top search & filter floating bar: rounded-xl floating pill containing a search input ('Find ward or landmark...'), quick trajectory filters with clear status pills ('All Wards', '\ud83d\udd25 38 Emerging', '\u26a0\ufe0f 126 Persistent', '\ud83c\udf31 41 Improving'), and a layer dropdown.\n   - Clean bottom-left map legend: Soft glassmorphism pill with simple gradient 'Cooler (-2\u00b0C) \u2192 Warmer (+4.5\u00b0C)'.\n   - Clean floating map controls (zoom in, zoom out, 3D tilt, reset center) in rounded-lg vertical pill on right.\n2. Centered/Interactive Map Area:\n   - Dark, sleek basemap of Chennai with clean, rounded polygon highlights and smooth hover labels.\n   - Distinct target pin on selected hotspot 'Sector 4B \u2022 Teynampet (Zone IX)'.\n3. Redesigned Right Detail Drawer (Clean shadcn/ui Card style):\n   - Beautiful rounded-2xl card floating over the map with smooth padding and close button.\n   - Header: 'Teynampet \u2022 Ward 114' in clean typography with a soft orange badge 'Emerging Hotspot' and cell ID 'CHE_1042' in muted small mono.\n   - Key Highlight Metric: Big, legible '+2.8\u00b0C above baseline' with a clear explanatory caption ('Projected to rise +0.03\u00b0C per month without intervention').\n   - Simplified Tabs with rounded-lg segment styling: 'Overview', 'Why It Matters', 'Recommended Actions'.\n   - Trajectory Forecast: Elegant, clean line graph showing 3-year historical trend transitioning into an orange projected cone.\n   - Human Vulnerability Card: 2x2 rounded grid with friendly icons and clear labels ('4,180 Residents', '2 Schools Nearby', '84% Concrete Surface', '4.1% Low Tree Canopy').\n   - Action Bar at bottom: High-visibility button 'Simulate Cooling Solutions for this Cell' linking directly to the optimizer.\nVisual Tone: Ultra clean, non-intimidating, high-contrast, rounded corners (rounded-2xl and rounded-xl), smooth borders, zero messy visual noise.",
+  "name": "projects/15139587154950123034/screens/757fd42c1a0e4f9e9cab00350f868727",
+  "theme": {
+    "colorMode": "DARK",
+    "font": "PLUS_JAKARTA_SANS",
+    "roundness": "ROUND_EIGHT",
+    "customColor": "#f38020",
+    "headlineFont": "PLUS_JAKARTA_SANS",
+    "bodyFont": "INTER",
+    "labelFont": "INTER",
+    "namedColors": {
+      "primary_fixed": "#ffdcc7",
+      "surface_container": "#122131",
+      "surface_dim": "#051424",
+      "on_primary_container": "#592900",
+      "secondary_fixed": "#c4e7ff",
+      "primary_container": "#f38020",
+      "secondary_container": "#00a6e0",
+      "outline_variant": "#564336",
+      "outline": "#a58c7d",
+      "secondary": "#7bd0ff",
+      "on_primary_fixed": "#311300",
+      "on_tertiary_container": "#003f29",
+      "on_tertiary_fixed_variant": "#005236",
+      "error_container": "#93000a",
+      "on_secondary_container": "#00374d",
+      "surface_container_lowest": "#010f1f",
+      "on_surface_variant": "#ddc1b1",
+      "on_error": "#690005",
+      "primary_fixed_dim": "#ffb787",
+      "on_primary": "#502400",
+      "tertiary": "#4edea3",
+      "on_secondary": "#00354a",
+      "tertiary_container": "#00b57d",
+      "surface": "#051424",
+      "surface_variant": "#273647",
+      "secondary_fixed_dim": "#7bd0ff",
+      "on_error_container": "#ffdad6",
+      "on_primary_fixed_variant": "#723600",
+      "on_secondary_fixed": "#001e2c",
+      "inverse_on_surface": "#233143",
+      "inverse_primary": "#964900",
+      "primary": "#ffb787",
+      "tertiary_fixed_dim": "#4edea3",
+      "tertiary_fixed": "#6ffbbe",
+      "inverse_surface": "#d4e4fa",
+      "on_background": "#d4e4fa",
+      "background": "#051424",
+      "surface_container_high": "#1c2b3c",
+      "on_secondary_fixed_variant": "#004c69",
+      "on_surface": "#d4e4fa",
+      "on_tertiary_fixed": "#002113",
+      "surface_bright": "#2c3a4c",
+      "error": "#ffb4ab",
+      "surface_container_highest": "#273647",
+      "surface_tint": "#ffb787",
+      "on_tertiary": "#003824",
+      "surface_container_low": "#0d1c2d"
+    },
+    "colorVariant": "FIDELITY",
+    "overridePrimaryColor": "#f38020",
+    "overrideSecondaryColor": "#38bdf8",
+    "overrideTertiaryColor": "#10b981",
+    "overrideNeutralColor": "#94a3b8",
+    "spacingScale": 2,
+    "typography": {
+      "code-sm": {
+        "fontFamily": "JetBrains Mono",
+        "fontSize": "12px",
+        "fontWeight": "400",
+        "lineHeight": "18px"
+      },
+      "body-sm": {
+        "fontFamily": "Inter",
+        "fontSize": "12px",
+        "fontWeight": "400",
+        "lineHeight": "18px"
+      },
+      "headline-xl": {
+        "fontFamily": "Plus Jakarta Sans",
+        "fontSize": "40px",
+        "fontWeight": "700",
+        "lineHeight": "48px",
+        "letterSpacing": "-0.025em"
+      },
+      "label-sm": {
+        "fontFamily": "Inter",
+        "fontSize": "11px",
+        "fontWeight": "500",
+        "lineHeight": "16px",
+        "letterSpacing": "0.02em"
+      },
+      "label-md": {
+        "fontFamily": "Inter",
+        "fontSize": "13px",
+        "fontWeight": "500",
+        "lineHeight": "18px",
+        "letterSpacing": "0.005em"
+      },
+      "headline-md": {
+        "fontFamily": "Plus Jakarta Sans",
+        "fontSize": "24px",
+        "fontWeight": "600",
+        "lineHeight": "32px",
+        "letterSpacing": "-0.015em"
+      },
+      "headline-lg": {
+        "fontFamily": "Plus Jakarta Sans",
+        "fontSize": "32px",
+        "fontWeight": "600",
+        "lineHeight": "40px",
+        "letterSpacing": "-0.02em"
+      },
+      "body-lg": {
+        "fontFamily": "Inter",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "lineHeight": "26px"
+      },
+      "headline-xl-mobile": {
+        "fontFamily": "Plus Jakarta Sans",
+        "fontSize": "30px",
+        "fontWeight": "700",
+        "lineHeight": "38px",
+        "letterSpacing": "-0.02em"
+      },
+      "headline-sm": {
+        "fontFamily": "Plus Jakarta Sans",
+        "fontSize": "20px",
+        "fontWeight": "600",
+        "lineHeight": "28px",
+        "letterSpacing": "-0.01em"
+      },
+      "headline-lg-mobile": {
+        "fontFamily": "Plus Jakarta Sans",
+        "fontSize": "24px",
+        "fontWeight": "600",
+        "lineHeight": "32px",
+        "letterSpacing": "-0.015em"
+      },
+      "body-md": {
+        "fontFamily": "Inter",
+        "fontSize": "14px",
+        "fontWeight": "400",
+        "lineHeight": "22px"
+      }
+    },
+    "spacing": {
+      "sidebar-width": "16rem",
+      "space-xl": "2rem",
+      "gutter-mobile": "1rem",
+      "gutter-desktop": "1.5rem",
+      "space-lg": "1.5rem",
+      "space-2xl": "3rem",
+      "space-base": "1rem",
+      "space-sm": "0.5rem",
+      "space-md": "0.75rem",
+      "header-height": "3.5rem",
+      "space-2xs": "0.125rem",
+      "space-3xl": "4rem",
+      "space-xs": "0.25rem"
+    },
+    "headlineFontFamily": "Plus Jakarta Sans",
+    "bodyFontFamily": "Inter",
+    "labelFontFamily": "Inter"
+  },
+  "deviceType": "DESKTOP",
+  "screenType": "DESIGN",
+  "screenMetadata": {
+    "agentType": "PRO_AGENT",
+    "status": "COMPLETE"
+  },
+  "designSystem": {
+    "name": "assets/c7789820044a4fd796242bb8c589d788",
+    "designSystem": {
+      "displayName": "Precision Infrastructure & Thermal Telemetry",
+      "styleGuidelines": "## Brand & Style\nThis design system pairs the robust, mission-critical precision of global edge infrastructure with the sleek, polished craft of modern developer utilities. Tailored for infrastructure engineers, network operators, and data observability teams, the aesthetic communicates low-latency performance, high operational security, and extreme analytical clarity.\n\nThe visual direction combines modern technical minimalism with refined dark-mode glass dynamics:\n- **Atmosphere:** Deep obsidian and slate foundations (#0B0F17 to #1E293B) punctuated by a blazing, high-efficiency solar flare orange (#F38020) and crisp diagnostic status accents.\n- **Craft:** Subtle structural hair lines, micro-translucencies, soft inset highlights, and tactile precision surfaces reminiscent of Cloudflare\u2019s developer console and shadcn/ui\u2019s crisp component architecture.\n- **Emotion:** Calm under stress, commanding, razor-sharp, and ergonomic during continuous telemetry monitoring.\n\n## Layout & Spacing\nThe layout adheres to an 8pt base grid system (with a 4pt sub-grid for fine UI micro-alignments like badges, icons, and input paddings).\n\n### Layout Geometry\n- **App Shell:** Persistent collapsed/expanded sidebar (256px wide) coupled with a sticky compact top header (56px high) featuring a sub-pixel border line (`rgba(51, 65, 85, 0.6)`).\n- **Grid Structure:** 12-column fluid grid for primary data canvases with 24px gutters on desktop views (`>= 1024px`) collapsing to a single-column stack with 16px margins on mobile screens (`< 768px`).\n- **Density Control:** Components prioritize high data density without feeling cramped by maintaining balanced internal card padding (20px to 24px) paired with compact table cells (8px vertical padding).\n\n## Elevation & Depth\nElevation avoids noisy, heavy drop shadows. Depth is communicated through calibrated tonal tiers, subtle luminous edge highlights, and low-opacity ambient occlusions:\n\n- **Level 0 (Canvas):** Pure `#0B0F17`.\n- **Level 1 (Panels & Dashboard Cards):** Background `#111827` enclosed with a 1px border of `rgba(51, 65, 85, 0.8)`. Soft diffuse shadow: `0 1px 3px 0 rgba(0, 0, 0, 0.4)`.\n- **Level 2 (Active States, Drawers, Dropdowns):** Background `#1E293B`, border `rgba(71, 85, 105, 0.8)`, shadow: `0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5)`.\n- **Level 3 (Modals & Command Palettes):** Semi-transparent `#111827` (with `backdrop-filter: blur(12px)`), bordered by a linear rim-light (`rgba(243, 128, 32, 0.2)` on top transitioning down to `rgba(51, 65, 85, 0.6)`), casting `0 25px 50px -12px rgba(0, 0, 0, 0.7)`.\n\n## Components\n\n### Buttons\n- **Primary:** Background `#F38020`, text `#0B0F17` (bold, contrast-verified), border `transparent`. Hover: `#FA8C32`, active: `#DF7217`. Focus ring: 2px offset with `#F38020`.\n- **Secondary:** Background `#1E293B`, text `#F8FAFC`, border 1px `rgba(51, 65, 85, 0.9)`. Hover: `#334155`.\n- **Ghost / Tertiary:** Background transparent, text `#94A3B8`. Hover: background `rgba(30, 41, 59, 0.6)`, text `#F8FAFC`.\n\n### Segmented Controls & Tabs\n- Encased pill or rounded container (`#0B0F17`) with 1px `rgba(51, 65, 85, 0.8)`.\n- Active segment: `#1E293B`, crisp white text (`#F8FAFC`), subtle shadow `0 1px 2px rgba(0, 0, 0, 0.3)`.\n- Inactive segment: Text `#94A3B8`, transitioning seamlessly on hover.\n\n### Data Inputs & Search Fields\n- Inset canvas styling: `#0B0F17` background surrounded by 1px `rgba(51, 65, 85, 0.8)`.\n- Focus state: Border transitions to `#F38020` with a subtle outer glow (`box-shadow: 0 0 0 1px #F38020`).\n- Integrated keyboard shortcuts rendered in monospaced micro-badges (`#1E293B` fill, `#64748B` label).\n\n### Cards & Observability Modules\n- Background `#111827`, rounded-xl, 1px border `rgba(51, 65, 85, 0.8)`.\n- Card headers feature clear separation with typography scale `headline-sm`, subtitle `body-sm` in `#64748B`, and top-right telemetry pill indicators.\n\n### Status Chips & Badges\n- **Operational / Normal:** Border `rgba(16, 185, 129, 0.3)`, background `rgba(16, 185, 129, 0.1)`, text `#34D399`. Accompanied by a pulsating 6px green beacon.\n- **Thermal Alert / Spike:** Border `rgba(243, 128, 32, 0.3)`, background `rgba(243, 128, 32, 0.1)`, text `#FB923C`.\n- **Incident / Error:** Border `rgba(239, 68, 68, 0.3)`, background `rgba(239, 68, 68, 0.1)`, text `#F87171`.",
+      "theme": {
+        "colorMode": "DARK",
+        "font": "PLUS_JAKARTA_SANS",
+        "roundness": "ROUND_EIGHT",
+        "customColor": "#f38020",
+        "headlineFont": "PLUS_JAKARTA_SANS",
+        "bodyFont": "INTER",
+        "labelFont": "INTER",
+        "namedColors": {
+          "on_tertiary_fixed": "#002113",
+          "inverse_surface": "#d4e4fa",
+          "on_primary": "#502400",
+          "surface_dim": "#051424",
+          "on_primary_fixed": "#311300",
+          "inverse_primary": "#964900",
+          "on_background": "#d4e4fa",
+          "surface": "#051424",
+          "secondary_fixed_dim": "#7bd0ff",
+          "surface_container_highest": "#273647",
+          "surface_container_high": "#1c2b3c",
+          "secondary_container": "#00a6e0",
+          "on_secondary": "#00354a",
+          "outline": "#a58c7d",
+          "secondary": "#7bd0ff",
+          "inverse_on_surface": "#233143",
+          "on_secondary_fixed": "#001e2c",
+          "surface_container_low": "#0d1c2d",
+          "tertiary_fixed_dim": "#4edea3",
+          "tertiary_container": "#00b57d",
+          "surface_bright": "#2c3a4c",
+          "tertiary": "#4edea3",
+          "on_error_container": "#ffdad6",
+          "primary_fixed_dim": "#ffb787",
+          "on_primary_fixed_variant": "#723600",
+          "primary_fixed": "#ffdcc7",
+          "error_container": "#93000a",
+          "on_surface_variant": "#ddc1b1",
+          "surface_container_lowest": "#010f1f",
+          "on_tertiary_container": "#003f29",
+          "error": "#ffb4ab",
+          "on_primary_container": "#592900",
+          "secondary_fixed": "#c4e7ff",
+          "on_tertiary_fixed_variant": "#005236",
+          "outline_variant": "#564336",
+          "on_secondary_container": "#00374d",
+          "on_error": "#690005",
+          "surface_container": "#122131",
+          "primary_container": "#f38020",
+          "primary": "#ffb787",
+          "surface_variant": "#273647",
+          "surface_tint": "#ffb787",
+          "background": "#051424",
+          "tertiary_fixed": "#6ffbbe",
+          "on_surface": "#d4e4fa",
+          "on_secondary_fixed_variant": "#004c69",
+          "on_tertiary": "#003824"
+        },
+        "designMd": "---\nname: Precision Infrastructure & Thermal Telemetry\ncolors:\n  surface: '#051424'\n  surface-dim: '#051424'\n  surface-bright: '#2c3a4c'\n  surface-container-lowest: '#010f1f'\n  surface-container-low: '#0d1c2d'\n  surface-container: '#122131'\n  surface-container-high: '#1c2b3c'\n  surface-container-highest: '#273647'\n  on-surface: '#d4e4fa'\n  on-surface-variant: '#ddc1b1'\n  inverse-surface: '#d4e4fa'\n  inverse-on-surface: '#233143'\n  outline: '#a58c7d'\n  outline-variant: '#564336'\n  surface-tint: '#ffb787'\n  primary: '#ffb787'\n  on-primary: '#502400'\n  primary-container: '#f38020'\n  on-primary-container: '#592900'\n  inverse-primary: '#964900'\n  secondary: '#7bd0ff'\n  on-secondary: '#00354a'\n  secondary-container: '#00a6e0'\n  on-secondary-container: '#00374d'\n  tertiary: '#4edea3'\n  on-tertiary: '#003824'\n  tertiary-container: '#00b57d'\n  on-tertiary-container: '#003f29'\n  error: '#ffb4ab'\n  on-error: '#690005'\n  error-container: '#93000a'\n  on-error-container: '#ffdad6'\n  primary-fixed: '#ffdcc7'\n  primary-fixed-dim: '#ffb787'\n  on-primary-fixed: '#311300'\n  on-primary-fixed-variant: '#723600'\n  secondary-fixed: '#c4e7ff'\n  secondary-fixed-dim: '#7bd0ff'\n  on-secondary-fixed: '#001e2c'\n  on-secondary-fixed-variant: '#004c69'\n  tertiary-fixed: '#6ffbbe'\n  tertiary-fixed-dim: '#4edea3'\n  on-tertiary-fixed: '#002113'\n  on-tertiary-fixed-variant: '#005236'\n  background: '#051424'\n  on-background: '#d4e4fa'\n  surface-variant: '#273647'\ntypography:\n  headline-xl:\n    fontFamily: Plus Jakarta Sans\n    fontSize: 40px\n    fontWeight: '700'\n    lineHeight: 48px\n    letterSpacing: -0.025em\n  headline-xl-mobile:\n    fontFamily: Plus Jakarta Sans\n    fontSize: 30px\n    fontWeight: '700'\n    lineHeight: 38px\n    letterSpacing: -0.02em\n  headline-lg:\n    fontFamily: Plus Jakarta Sans\n    fontSize: 32px\n    fontWeight: '600'\n    lineHeight: 40px\n    letterSpacing: -0.02em\n  headline-lg-mobile:\n    fontFamily: Plus Jakarta Sans\n    fontSize: 24px\n    fontWeight: '600'\n    lineHeight: 32px\n    letterSpacing: -0.015em\n  headline-md:\n    fontFamily: Plus Jakarta Sans\n    fontSize: 24px\n    fontWeight: '600'\n    lineHeight: 32px\n    letterSpacing: -0.015em\n  headline-sm:\n    fontFamily: Plus Jakarta Sans\n    fontSize: 20px\n    fontWeight: '600'\n    lineHeight: 28px\n    letterSpacing: -0.01em\n  body-lg:\n    fontFamily: Inter\n    fontSize: 16px\n    fontWeight: '400'\n    lineHeight: 26px\n  body-md:\n    fontFamily: Inter\n    fontSize: 14px\n    fontWeight: '400'\n    lineHeight: 22px\n  body-sm:\n    fontFamily: Inter\n    fontSize: 12px\n    fontWeight: '400'\n    lineHeight: 18px\n  label-md:\n    fontFamily: Inter\n    fontSize: 13px\n    fontWeight: '500'\n    lineHeight: 18px\n    letterSpacing: 0.005em\n  label-sm:\n    fontFamily: Inter\n    fontSize: 11px\n    fontWeight: '500'\n    lineHeight: 16px\n    letterSpacing: 0.02em\n  code-sm:\n    fontFamily: JetBrains Mono\n    fontSize: 12px\n    fontWeight: '400'\n    lineHeight: 18px\nrounded:\n  sm: 0.25rem\n  DEFAULT: 0.5rem\n  md: 0.75rem\n  lg: 1rem\n  xl: 1.5rem\n  full: 9999px\nspacing:\n  space-2xs: 0.125rem\n  space-xs: 0.25rem\n  space-sm: 0.5rem\n  space-md: 0.75rem\n  space-base: 1rem\n  space-lg: 1.5rem\n  space-xl: 2rem\n  space-2xl: 3rem\n  space-3xl: 4rem\n  gutter-mobile: 1rem\n  gutter-desktop: 1.5rem\n  sidebar-width: 16rem\n  header-height: 3.5rem\n---\n\n## Brand & Style\nThis design system pairs the robust, mission-critical precision of global edge infrastructure with the sleek, polished craft of modern developer utilities. Tailored for infrastructure engineers, network operators, and data observability teams, the aesthetic communicates low-latency performance, high operational security, and extreme analytical clarity.\n\nThe visual direction combines modern technical minimalism with refined dark-mode glass dynamics:\n- **Atmosphere:** Deep obsidian and slate foundations (#0B0F17 to #1E293B) punctuated by a blazing, high-efficiency solar flare orange (#F38020) and crisp diagnostic status accents.\n- **Craft:** Subtle structural hair lines, micro-translucencies, soft inset highlights, and tactile precision surfaces reminiscent of Cloudflare\u2019s developer console and shadcn/ui\u2019s crisp component architecture.\n- **Emotion:** Calm under stress, commanding, razor-sharp, and ergonomic during continuous telemetry monitoring.\n\n## Colors\nThe system relies on a calibrated dark-first hierarchy engineered to reduce optical fatigue during extended analytical sessions while keeping contrast ratios rigorously WCAG 2.1 AA+ compliant.\n\n### Base Surface Architecture\n- **Canvas Base:** `#0B0F17` (Deep Obsidian Void)\n- **Surface Elevation 1 (Cards, panels):** `#111827` (Charcoal Slate)\n- **Surface Elevation 2 (Elevated popovers, tooltips, dialogs):** `#1E293B` (Luminous Slate)\n- **Surface Accent & Borders:** `#334155` at variable opacities (`rgba(51, 65, 85, 0.6)` for structural grid lines, `rgba(51, 65, 85, 0.85)` for interactable frames).\n\n### Key Colors & State Roles\n- **Primary Accent (`#F38020`):** Signifies user initiation, focal points, primary interactions, live thermal hotspots, and edge deployments.\n- **Secondary (`#38BDF8`):** Network routing, active protocol streams, and system telemetry metrics.\n- **Tertiary / Success (`#10B981`):** Optimal health, operational node status, and valid routing.\n- **Warning (`#F59E0B`):** Thermal throttling warnings, rate limits, and latency spikes.\n- **Critical / Danger (`#EF4444`):** DDoS mitigation active, node failure, and configuration errors.\n- **Neutrals:** Text ranges from `#F8FAFC` (high-emphasis headers) down to `#94A3B8` (body content) and `#64748B` (muted metadata/labels).\n\n## Typography\nThe typographic system establishes a strict visual cadence:\n- **Display & Headings:** Plus Jakarta Sans provides contemporary confidence with subtle geometry that stays approachable yet crisp.\n- **Body, UI, & Controls:** Inter anchors high-density operational data with clean legibility, neutral proportions, and uniform glyph distribution.\n- **Telemetry, Code & Identifiers:** JetBrains Mono serves as the monospace counterpart for IP addresses, CIDR blocks, coordinates, hash stamps, and server ports.\n\nApply strict tabular numeric settings (`font-variant-numeric: tabular-nums`) across all analytical data dashboards, tables, and metric indicators to eliminate layout jitter during live data feeds.\n\n## Layout & Spacing\nThe layout adheres to an 8pt base grid system (with a 4pt sub-grid for fine UI micro-alignments like badges, icons, and input paddings).\n\n### Layout Geometry\n- **App Shell:** Persistent collapsed/expanded sidebar (256px wide) coupled with a sticky compact top header (56px high) featuring a sub-pixel border line (`rgba(51, 65, 85, 0.6)`).\n- **Grid Structure:** 12-column fluid grid for primary data canvases with 24px gutters on desktop views (`>= 1024px`) collapsing to a single-column stack with 16px margins on mobile screens (`< 768px`).\n- **Density Control:** Components prioritize high data density without feeling cramped by maintaining balanced internal card padding (20px to 24px) paired with compact table cells (8px vertical padding).\n\n## Elevation & Depth\nElevation avoids noisy, heavy drop shadows. Depth is communicated through calibrated tonal tiers, subtle luminous edge highlights, and low-opacity ambient occlusions:\n\n- **Level 0 (Canvas):** Pure `#0B0F17`.\n- **Level 1 (Panels & Dashboard Cards):** Background `#111827` enclosed with a 1px border of `rgba(51, 65, 85, 0.8)`. Soft diffuse shadow: `0 1px 3px 0 rgba(0, 0, 0, 0.4)`.\n- **Level 2 (Active States, Drawers, Dropdowns):** Background `#1E293B`, border `rgba(71, 85, 105, 0.8)`, shadow: `0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5)`.\n- **Level 3 (Modals & Command Palettes):** Semi-transparent `#111827` (with `backdrop-filter: blur(12px)`), bordered by a linear rim-light (`rgba(243, 128, 32, 0.2)` on top transitioning down to `rgba(51, 65, 85, 0.6)`), casting `0 25px 50px -12px rgba(0, 0, 0, 0.7)`.\n\n## Shapes\nThe shape strategy mirrors modern precision operating environments (Cloudflare Dash, Linear, and macOS utility software). \n\n- **Macro Containers:** Modals, hero diagnostic widgets, and master monitoring panels use `rounded-2xl` (1.5rem / 24px) or `rounded-xl` (1rem / 16px).\n- **Micro UI Elements:** Buttons, inputs, search triggers, and segmented controllers use `rounded-lg` (0.5rem / 8px).\n- **Badges & Indicators:** Pill shapes (`rounded-full`) for status chips, telemetry health pings, and filter counters.\n\n## Components\n\n### Buttons\n- **Primary:** Background `#F38020`, text `#0B0F17` (bold, contrast-verified), border `transparent`. Hover: `#FA8C32`, active: `#DF7217`. Focus ring: 2px offset with `#F38020`.\n- **Secondary:** Background `#1E293B`, text `#F8FAFC`, border 1px `rgba(51, 65, 85, 0.9)`. Hover: `#334155`.\n- **Ghost / Tertiary:** Background transparent, text `#94A3B8`. Hover: background `rgba(30, 41, 59, 0.6)`, text `#F8FAFC`.\n\n### Segmented Controls & Tabs\n- Encased pill or rounded container (`#0B0F17`) with 1px `rgba(51, 65, 85, 0.8)`.\n- Active segment: `#1E293B`, crisp white text (`#F8FAFC`), subtle shadow `0 1px 2px rgba(0, 0, 0, 0.3)`.\n- Inactive segment: Text `#94A3B8`, transitioning seamlessly on hover.\n\n### Data Inputs & Search Fields\n- Inset canvas styling: `#0B0F17` background surrounded by 1px `rgba(51, 65, 85, 0.8)`.\n- Focus state: Border transitions to `#F38020` with a subtle outer glow (`box-shadow: 0 0 0 1px #F38020`).\n- Integrated keyboard shortcuts rendered in monospaced micro-badges (`#1E293B` fill, `#64748B` label).\n\n### Cards & Observability Modules\n- Background `#111827`, rounded-xl, 1px border `rgba(51, 65, 85, 0.8)`.\n- Card headers feature clear separation with typography scale `headline-sm`, subtitle `body-sm` in `#64748B`, and top-right telemetry pill indicators.\n\n### Status Chips & Badges\n- **Operational / Normal:** Border `rgba(16, 185, 129, 0.3)`, background `rgba(16, 185, 129, 0.1)`, text `#34D399`. Accompanied by a pulsating 6px green beacon.\n- **Thermal Alert / Spike:** Border `rgba(243, 128, 32, 0.3)`, background `rgba(243, 128, 32, 0.1)`, text `#FB923C`.\n- **Incident / Error:** Border `rgba(239, 68, 68, 0.3)`, background `rgba(239, 68, 68, 0.1)`, text `#F87171`.",
+        "colorVariant": "FIDELITY",
+        "overridePrimaryColor": "#f38020",
+        "overrideSecondaryColor": "#38bdf8",
+        "overrideTertiaryColor": "#10b981",
+        "overrideNeutralColor": "#94a3b8",
+        "spacingScale": 2,
+        "typography": {
+          "headline-sm": {
+            "fontFamily": "Plus Jakarta Sans",
+            "fontSize": "20px",
+            "fontWeight": "600",
+            "lineHeight": "28px",
+            "letterSpacing": "-0.01em"
+          },
+          "headline-lg-mobile": {
+            "fontFamily": "Plus Jakarta Sans",
+            "fontSize": "24px",
+            "fontWeight": "600",
+            "lineHeight": "32px",
+            "letterSpacing": "-0.015em"
+          },
+          "headline-lg": {
+            "fontFamily": "Plus Jakarta Sans",
+            "fontSize": "32px",
+            "fontWeight": "600",
+            "lineHeight": "40px",
+            "letterSpacing": "-0.02em"
+          },
+          "headline-md": {
+            "fontFamily": "Plus Jakarta Sans",
+            "fontSize": "24px",
+            "fontWeight": "600",
+            "lineHeight": "32px",
+            "letterSpacing": "-0.015em"
+          },
+          "body-md": {
+            "fontFamily": "Inter",
+            "fontSize": "14px",
+            "fontWeight": "400",
+            "lineHeight": "22px"
+          },
+          "headline-xl-mobile": {
+            "fontFamily": "Plus Jakarta Sans",
+            "fontSize": "30px",
+            "fontWeight": "700",
+            "lineHeight": "38px",
+            "letterSpacing": "-0.02em"
+          },
+          "body-lg": {
+            "fontFamily": "Inter",
+            "fontSize": "16px",
+            "fontWeight": "400",
+            "lineHeight": "26px"
+          },
+          "code-sm": {
+            "fontFamily": "JetBrains Mono",
+            "fontSize": "12px",
+            "fontWeight": "400",
+            "lineHeight": "18px"
+          },
+          "body-sm": {
+            "fontFamily": "Inter",
+            "fontSize": "12px",
+            "fontWeight": "400",
+            "lineHeight": "18px"
+          },
+          "label-sm": {
+            "fontFamily": "Inter",
+            "fontSize": "11px",
+            "fontWeight": "500",
+            "lineHeight": "16px",
+            "letterSpacing": "0.02em"
+          },
+          "label-md": {
+            "fontFamily": "Inter",
+            "fontSize": "13px",
+            "fontWeight": "500",
+            "lineHeight": "18px",
+            "letterSpacing": "0.005em"
+          },
+          "headline-xl": {
+            "fontFamily": "Plus Jakarta Sans",
+            "fontSize": "40px",
+            "fontWeight": "700",
+            "lineHeight": "48px",
+            "letterSpacing": "-0.025em"
+          }
+        },
+        "spacing": {
+          "space-base": "1rem",
+          "space-2xl": "3rem",
+          "space-lg": "1.5rem",
+          "space-sm": "0.5rem",
+          "space-md": "0.75rem",
+          "space-3xl": "4rem",
+          "space-2xs": "0.125rem",
+          "header-height": "3.5rem",
+          "space-xs": "0.25rem",
+          "sidebar-width": "16rem",
+          "space-xl": "2rem",
+          "gutter-desktop": "1.5rem",
+          "gutter-mobile": "1rem"
+        },
+        "headlineFontFamily": "Plus Jakarta Sans",
+        "bodyFontFamily": "Inter",
+        "labelFontFamily": "Inter"
+      }
+    },
+    "version": "1"
+  }
+}
