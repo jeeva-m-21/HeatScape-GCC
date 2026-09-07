@@ -67,16 +67,24 @@ class SyntheticSeedService:
     @classmethod
     def generate_seed_cells(cls, count: int = 1200) -> List[Dict[str, Any]]:
         """
-        Generates 1,200 cells clustered across Central (T. Nagar, Kodambakkam),
+        Generates cells clustered across Central (T. Nagar, Kodambakkam),
         North (George Town, Royapuram), and South (Adyar, Velachery, Guindy).
         """
         random.seed(42)
         np.random.seed(42)
 
+        ratio_north = 0.25
+        ratio_central = 0.42
+        ratio_south = 0.33
+
+        c_north = max(1, int(count * ratio_north))
+        c_central = max(1, int(count * ratio_central))
+        c_south = max(1, count - c_north - c_central)
+
         clusters = [
-            {"zone": "ZONE_05_NORTH", "ward_prefix": "WARD_N", "center_lon": 80.280, "center_lat": 13.100, "count": 300},
-            {"zone": "ZONE_08_CENTRAL", "ward_prefix": "WARD_C", "center_lon": 80.230, "center_lat": 13.040, "count": 500},
-            {"zone": "ZONE_13_SOUTH", "ward_prefix": "WARD_S", "center_lon": 80.220, "center_lat": 12.980, "count": 400},
+            {"zone": "ZONE_05_NORTH", "ward_prefix": "WARD_N", "center_lon": 80.280, "center_lat": 13.100, "count": c_north},
+            {"zone": "ZONE_08_CENTRAL", "ward_prefix": "WARD_C", "center_lon": 80.230, "center_lat": 13.040, "count": c_central},
+            {"zone": "ZONE_13_SOUTH", "ward_prefix": "WARD_S", "center_lon": 80.220, "center_lat": 12.980, "count": c_south},
         ]
 
         cells = []

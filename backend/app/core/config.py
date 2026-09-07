@@ -1,4 +1,4 @@
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import Optional
 
 
@@ -25,9 +25,7 @@ class Settings(BaseSettings):
     BBOX_MAX_LON: float = 80.3350
     BBOX_MAX_LAT: float = 13.2450
 
-    class Config:
-        env_file = ".env"
-        extra = "ignore"
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
 
 settings = Settings()

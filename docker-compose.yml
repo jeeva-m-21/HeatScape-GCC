@@ -58,7 +58,7 @@ services:
       dockerfile: Dockerfile
     container_name: heatscape_frontend
     ports:
-      - "3000:3000"
+      - "3002:3000"
     environment:
       NEXT_PUBLIC_API_URL: http://localhost:8000/api/v1
     depends_on:

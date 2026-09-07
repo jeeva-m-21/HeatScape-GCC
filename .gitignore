@@ -1,0 +1,45 @@
+# Node / Next.js
+node_modules/
+.next/
+out/
+build/
+dist/
+frontend/tsconfig.tsbuildinfo
+
+# Python
+*.pyc
+__pycache__/
+.pytest_cache/
+.coverage
+htmlcov/
+*.egg-info/
+.venv/
+venv/
+env/
+
+# ML artifacts (auto-generated on startup — not tracked)
+backend/app/ml_artifacts/*.joblib
+backend/app/ml_artifacts/*.pkl
+# model_metadata.json IS tracked (metrics registry)
+!backend/app/ml_artifacts/model_metadata.json
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Docker volumes (host-side data)
+postgres_data/
+redis_data/
