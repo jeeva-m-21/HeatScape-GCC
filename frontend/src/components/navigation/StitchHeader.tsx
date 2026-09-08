@@ -33,7 +33,7 @@ export const StitchHeader: React.FC = () => {
 
   return (
     <>
-      <header className="w-full bg-[#000000] border-b border-[#222222] z-30 sticky top-0 px-4 py-2.5 flex items-center justify-between">
+      <header className="w-full bg-[#0D0F11] border-b border-white/[0.08] z-30 sticky top-0 px-4 py-2.5 flex items-center justify-between">
         {/* Brand & Live Region Pill */}
         <div className="flex items-center gap-4">
           <Link href="/" className="flex items-center gap-2.5 group">
@@ -49,11 +49,8 @@ export const StitchHeader: React.FC = () => {
           </Link>
 
           {/* Live Status Pill */}
-          <div className="hidden lg:flex items-center gap-2 px-3 py-1 rounded-full bg-[#101010] border border-[#222222] text-xs font-mono">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-            </span>
+          <div className="hidden lg:flex items-center gap-2 px-3 py-1 rounded-full bg-[#15181B] border border-white/[0.08] text-xs font-mono">
+            <span className="inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
             <span className="text-gray-300">Chennai Region (EPSG:32644)</span>
             <span className="text-gray-600">•</span>
             <span className="text-emerald-400">Live Engine</span>
@@ -116,13 +113,10 @@ export const StitchHeader: React.FC = () => {
           </button>
           <button
             onClick={() => setSensorModalOpen(true)}
-            className="px-2.5 py-1 bg-[#101010] hover:bg-[#181818] border border-emerald-800/50 hover:border-emerald-500 font-mono text-[11px] text-emerald-400 flex items-center gap-1.5 rounded transition-colors cursor-pointer"
+            className="px-2.5 py-1 bg-[#15181B] hover:bg-[#1E2227] border border-emerald-800/40 hover:border-emerald-500 font-mono text-[11px] text-emerald-400 flex items-center gap-1.5 rounded transition-colors cursor-pointer"
             title="Click to view live 842 IoT sensor telemetry"
           >
-            <span className="relative flex h-1.5 w-1.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
-            </span>
+            <span className="inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
             <span>{t.sensorsActive}</span>
           </button>
         </div>

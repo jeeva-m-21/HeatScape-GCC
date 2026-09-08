@@ -32,7 +32,7 @@ export const HeatScapeLogo: React.FC<HeatScapeLogoProps> = ({
           viewBox="0 0 48 48"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
-          className={`w-full h-full drop-shadow-[0_2px_8px_rgba(217,119,87,0.3)] ${
+          className={`w-full h-full ${
             animate ? 'transition-transform hover:scale-105 duration-300' : ''
           }`}
         >
@@ -104,8 +104,7 @@ export const HeatScapeLogo: React.FC<HeatScapeLogoProps> = ({
 
         {animate && (
           <span className="absolute -top-0.5 -right-0.5 flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#D97757] opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-[#D97757]"></span>
+            <span className="inline-flex rounded-full h-2 w-2 bg-[#D97757]"></span>
           </span>
         )}
       </div>

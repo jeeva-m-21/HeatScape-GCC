@@ -107,10 +107,7 @@ export default function ModernUrbanCoolingLanding() {
               className="hidden sm:flex items-center gap-space-xs px-space-md py-space-xs rounded-full bg-tertiary-container/15 hover:bg-tertiary-container/30 border border-tertiary/30 hover:border-tertiary text-tertiary font-label-sm text-label-sm transition-all cursor-pointer shadow-sm"
               title="Click to view live 842 IoT sensor telemetry"
             >
-              <span className="relative flex h-2 w-2 mr-0.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-tertiary opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-tertiary"></span>
-              </span>
+              <span className="inline-flex rounded-full h-2 w-2 bg-tertiary mr-0.5"></span>
               <span className="font-medium">842 Sensors Active</span>
             </button>
             <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center ring-2 ring-primary/20">
@@ -129,17 +126,14 @@ export default function ModernUrbanCoolingLanding() {
       {/* Main Container */}
       <main className="w-full pt-header-height bg-surface">
         <div className="flex flex-col w-full overflow-hidden">
-          {/* Subtle Ambient Backdrops */}
+          {/* Hero Section Container */}
           <div className="relative w-full">
-            <div className="absolute top-12 left-1/2 -translate-x-1/2 w-[720px] h-[360px] bg-gradient-to-tr from-primary-container/10 via-primary/5 to-transparent blur-[140px] pointer-events-none -z-10"></div>
-            <div className="absolute top-80 right-10 w-[420px] h-[280px] bg-secondary-container/5 blur-[120px] pointer-events-none -z-10"></div>
-
             {/* Hero Section */}
             <div className="w-full max-w-7xl mx-auto px-gutter-desktop pt-space-xl pb-space-2xl">
               <div className="flex flex-col items-center text-center max-w-4xl mx-auto">
                 {/* Live Coverage Pill Badge */}
-                <div className="inline-flex items-center gap-space-xs px-space-base py-1.5 rounded-full bg-surface-container-high text-on-surface shadow-sm hover:bg-surface-bright transition-all cursor-default select-none mb-space-lg">
-                  <span className="text-primary-container text-[14px] animate-pulse">✨</span>
+                <div className="inline-flex items-center gap-space-xs px-space-base py-1 rounded-full bg-surface-container border border-white/[0.08] text-on-surface hover:bg-surface-container-high transition-all cursor-default select-none mb-space-lg">
+                  <span className="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
                   <span className="font-label-md text-label-md text-on-surface font-medium tracking-tight">
                     Live across Greater Chennai Corporation
                   </span>
@@ -150,9 +144,9 @@ export default function ModernUrbanCoolingLanding() {
                 </div>
 
                 {/* Main Typography Heading */}
-                <h1 className="font-headline-xl text-headline-xl sm:text-[54px] sm:leading-[60px] text-on-surface tracking-tight font-bold mb-space-base">
+                <h1 className="font-headline-xl text-headline-xl sm:text-[52px] sm:leading-[58px] text-white tracking-tight font-bold mb-space-base">
                   Smarter Urban Cooling for{' '}
-                  <span className="bg-gradient-to-r from-primary via-primary-container to-surface-tint bg-clip-text text-transparent">
+                  <span className="text-primary">
                     Resilient Cities.
                   </span>
                 </h1>
@@ -166,14 +160,14 @@ export default function ModernUrbanCoolingLanding() {
                 <div className="flex flex-wrap items-center justify-center gap-space-md mb-space-2xl w-full sm:w-auto">
                   <Link
                     href="/explorer"
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-space-sm px-space-xl py-3 rounded-full bg-primary-container text-on-primary-container font-headline-sm text-[15px] font-semibold hover:opacity-95 shadow-md shadow-primary-container/20 active:scale-[0.99] transition-all"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-space-sm px-space-xl py-2.5 rounded-xl bg-primary hover:bg-[#C86040] text-white font-headline-sm text-[14px] font-semibold transition-colors border border-primary/30"
                   >
                     <span>Explore Live Map</span>
                     <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
                   </Link>
                   <button
                     onClick={() => setSimulationModalOpen(true)}
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-space-sm px-space-xl py-3 rounded-full bg-surface-container-high text-on-surface font-headline-sm text-[15px] font-semibold hover:bg-surface-bright shadow-sm active:scale-[0.99] transition-all"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-space-sm px-space-xl py-2.5 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-headline-sm text-[14px] font-semibold transition-colors border border-white/[0.08]"
                     type="button"
                   >
                     <span className="material-symbols-outlined text-tertiary text-[18px]">play_circle</span>
@@ -184,7 +178,7 @@ export default function ModernUrbanCoolingLanding() {
                 {/* Interactive Ward Search */}
                 <div className="w-full max-w-2xl mx-auto mb-space-3xl">
                   <form
-                    className="relative flex items-center p-1.5 rounded-full bg-surface-container shadow-xl"
+                    className="relative flex items-center p-1.5 rounded-2xl bg-surface-container border border-white/[0.08]"
                     onSubmit={(e) => {
                       e.preventDefault();
                       handleSearch(wardQuery);
@@ -201,7 +195,7 @@ export default function ModernUrbanCoolingLanding() {
                       onChange={(e) => setWardQuery(e.target.value)}
                     />
                     <button
-                      className="shrink-0 inline-flex items-center gap-space-xs px-space-lg py-2 rounded-full bg-surface-container-highest hover:bg-primary-container hover:text-on-primary-container text-on-surface font-label-md text-label-md font-semibold transition-all"
+                      className="shrink-0 inline-flex items-center gap-space-xs px-space-lg py-2 rounded-xl bg-surface-container-high hover:bg-primary hover:text-white text-on-surface font-label-md text-label-md font-semibold transition-all border border-white/[0.06]"
                       type="submit"
                     >
                       <span>Inspect</span>
@@ -239,7 +233,7 @@ export default function ModernUrbanCoolingLanding() {
 
               {/* Hero Graphic: Modern Observability Preview Card */}
               <div
-                className="w-full rounded-2xl bg-surface-container p-space-lg shadow-2xl relative overflow-hidden"
+                className="w-full rounded-2xl bg-surface-container border border-outline-variant/30 p-space-lg relative overflow-hidden"
                 id="interactive-preview"
               >
                 {/* Window Top Bar */}
@@ -258,7 +252,7 @@ export default function ModernUrbanCoolingLanding() {
                   </div>
                   <div className="flex items-center gap-space-sm">
                     <span className="inline-flex items-center gap-1 px-space-sm py-0.5 rounded-full bg-tertiary/10 text-tertiary font-label-sm text-label-sm font-medium">
-                      <span className="w-1.5 h-1.5 rounded-full bg-tertiary animate-ping"></span>
+                      <span className="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
                       Telemetric Refresh 2m ago
                     </span>
                   </div>
@@ -320,7 +314,7 @@ export default function ModernUrbanCoolingLanding() {
                           "url('https://lh3.googleusercontent.com/aida-public/AB6AXuDXw-J-P_3I-vbGOepa-o1KqnW8scU__SyNA5FHE4AZZ3raI0GEpeN5_jlBSZXNKR5NMgc6pwnBUlhC2SeHlGHuvIxH2iOgCrbOijT-r_e5-7WUY8nJHErAnSzqKfqL-uADKtUDQQEup0c-72-7PXxXMQKkQaXhsaKq2FN0GHlEMOr8zU6QlZMZPTdp4QL_YUI7hv3cv_QHUXKQK8nsAwFj5u5danKYUSe-1c8Fo66UvWQ_lrbnxv1smg')",
                       }}
                     ></div>
-                    <div className="absolute inset-0 bg-gradient-to-tr from-surface-container-lowest via-primary-container/20 to-error/20 opacity-80 pointer-events-none"></div>
+                    <div className="absolute inset-0 bg-surface-container-lowest/80 pointer-events-none"></div>
 
                     {/* Top Coordinates HUD */}
                     <div className="relative z-10 flex items-center justify-between">
@@ -357,7 +351,7 @@ export default function ModernUrbanCoolingLanding() {
                     {/* Stylized SVG Heat Vector Overlay */}
                     <div className="relative z-10 my-auto flex items-center justify-center">
                       <svg
-                        className="w-full max-w-lg h-44 drop-shadow-[0_0_24px_rgba(243,128,32,0.35)]"
+                        className="w-full max-w-lg h-44"
                         fill="none"
                         viewBox="0 0 400 160"
                         xmlns="http://www.w3.org/2000/svg"
@@ -382,7 +376,7 @@ export default function ModernUrbanCoolingLanding() {
                           strokeWidth="3"
                         ></path>
                         <circle
-                          className="fill-error/20 stroke-error animate-pulse"
+                          className="fill-error/20 stroke-error"
                           cx="220"
                           cy="35"
                           r="8"
@@ -579,7 +573,7 @@ export default function ModernUrbanCoolingLanding() {
                   </div>
                   <svg className="w-full h-12 text-primary-container" fill="none" stroke="currentColor" viewBox="0 0 200 40">
                     <path d="M0 32 Q 40 28, 70 30 T 130 18 T 170 12 T 200 4" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5"></path>
-                    <circle className="fill-primary-container animate-pulse" cx="200" cy="4" r="3"></circle>
+                    <circle className="fill-primary-container" cx="200" cy="4" r="3"></circle>
                   </svg>
                 </div>
               </div>

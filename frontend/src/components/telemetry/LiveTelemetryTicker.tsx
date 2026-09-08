@@ -30,18 +30,11 @@ export const LiveTelemetryTicker: React.FC = () => {
         <div className="flex items-center gap-3 whitespace-nowrap">
           {/* Status Indicator */}
           <div className="flex items-center gap-1.5">
-            <span className="relative flex h-2 w-2">
-              <span
-                className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${
-                  isConnected ? 'bg-emerald-400' : 'bg-amber-400'
-                }`}
-              ></span>
-              <span
-                className={`relative inline-flex rounded-full h-2 w-2 ${
-                  isConnected ? 'bg-emerald-500' : 'bg-amber-500'
-                }`}
-              ></span>
-            </span>
+            <span
+              className={`inline-flex rounded-full h-2 w-2 ${
+                isConnected ? 'bg-emerald-500' : 'bg-amber-500'
+              }`}
+            ></span>
             <span className="text-[10px] text-gray-400 font-bold uppercase">
               {isConnected ? 'IoT Telemetry Live' : 'Reconnecting...'}
             </span>
