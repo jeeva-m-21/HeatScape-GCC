@@ -21,44 +21,52 @@
 
 ---
 
-## 📸 Product Gallery
+## 📸 Live Product Interface Showcase
 
-### 1. Spatiotemporal Trajectory Explorer (100m Citywide Grid & 3D Extrusions)
-> Visualizes 100m analytical grid cells across all 15 GCC zones with continuous thermal interpolation, layer toggles, and multi-year climate projections.
+### 1. Urban Cooling Overview & Rapid Ward Search (`/`)
+> Executive overview with low cognitive overhead, explaining core capabilities, real-time trust metrics, and instant ward search.
 <div align="center">
-  <img src="docs/images/trajectory_explorer.png" alt="HeatScape 3D Trajectory Explorer" width="95%" style="border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 12px 36px rgba(0,0,0,0.8);"/>
+  <img src="docs/images/landing_page_real.png" alt="HeatScape Landing Overview" width="98%" style="border-radius: 12px; border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 16px 40px rgba(0,0,0,0.8);"/>
 </div>
 
 ---
 
-### 2. Cooling Scenario Planner (MILP Budget Optimizer)
+### 2. Spatiotemporal Trajectory Explorer (`/explorer`)
+> High-resolution MapLibre GL vector mesh rendering 100m analytical grid cells across all 15 GCC zones with continuous thermal blankets, layer toggles, and 2020–2030 climate timelines.
+<div align="center">
+  <img src="docs/images/explorer_real.png" alt="HeatScape 3D Trajectory Explorer" width="98%" style="border-radius: 12px; border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 16px 40px rgba(0,0,0,0.8);"/>
+</div>
+
+---
+
+### 3. Cooling Scenario Planner & MILP Budget Optimizer (`/simulator`)
 > City engineers enter an available ward budget (e.g. ₹50 Lakhs); Google OR-Tools solves for the exact combination of cool roofs, Miyawaki forests, and shade canopies that maximizes cooling for vulnerable residents under the Tamil Nadu PWD 2024 Schedule of Rates.
 <div align="center">
-  <img src="docs/images/cooling_scenario_planner.png" alt="HeatScape Cooling Scenario Planner" width="95%" style="border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 12px 36px rgba(0,0,0,0.8);"/>
+  <img src="docs/images/simulator_real.png" alt="HeatScape Cooling Scenario Planner" width="98%" style="border-radius: 12px; border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 16px 40px rgba(0,0,0,0.8);"/>
 </div>
 
 ---
 
-### 3. Multi-View Spatial Matrix (4-Layer Comparison)
+### 4. Multi-View Spatial Matrix (`/multiview`)
 > Side-by-side comparative inspection of Surface Temperature, Tree Canopy Fraction, Built Infrastructure, and Social Vulnerability with 1-click contractor tender exports.
 <div align="center">
-  <img src="docs/images/multi_view_matrix.png" alt="HeatScape Multi-View Matrix" width="95%" style="border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 12px 36px rgba(0,0,0,0.8);"/>
+  <img src="docs/images/multiview_real.png" alt="HeatScape Multi-View Matrix" width="98%" style="border-radius: 12px; border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 16px 40px rgba(0,0,0,0.8);"/>
 </div>
 
 ---
 
-### 4. Post-Intervention Impact Monitoring & Counterfactual MRV
-> Tracks empirical sensor telemetry against pre-intervention baselines using Difference-in-Differences causal inference to verify that public cooling investments achieved their targeted thermal drops.
-<div align="center">
-  <img src="docs/images/impact_monitoring.png" alt="HeatScape Impact Monitoring" width="95%" style="border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 12px 36px rgba(0,0,0,0.8);"/>
-</div>
-
----
-
-### 5. TreeSHAP AI Biophysical Explainability
+### 5. TreeSHAP AI Biophysical Explainability (`/intelligence`)
 > Isolates the physical drivers of localized heat (vegetation deficit, asphalt concrete fraction, and street canyon wind blockage) so engineers know exactly what physical remedy to prescribe.
 <div align="center">
-  <img src="docs/images/urban_intelligence.png" alt="HeatScape TreeSHAP Biophysical Intelligence" width="95%" style="border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 12px 36px rgba(0,0,0,0.8);"/>
+  <img src="docs/images/intelligence_real.png" alt="HeatScape TreeSHAP Biophysical Intelligence" width="98%" style="border-radius: 12px; border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 16px 40px rgba(0,0,0,0.8);"/>
+</div>
+
+---
+
+### 6. Emergency Operations Center & GRAP Protocols (`/eoc`)
+> GCC crisis command center tracking Graded Response Action Plan (GRAP Stages 0–3), automated labor bans, evaporative misting truck routes, and cooling shelter activations.
+<div align="center">
+  <img src="docs/images/eoc_real.png" alt="HeatScape EOC Crisis Command Room" width="98%" style="border-radius: 12px; border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 16px 40px rgba(0,0,0,0.8);"/>
 </div>
 
 ---
