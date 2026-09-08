@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { SensorTelemetryModal } from '@/components/modals/SensorTelemetryModal';
+import { HeatScapeLogo } from '@/components/brand/HeatScapeLogo';
 
 export default function ModernUrbanCoolingLanding() {
   const [simulationModalOpen, setSimulationModalOpen] = useState(false);
@@ -48,13 +49,9 @@ export default function ModernUrbanCoolingLanding() {
         <div className="w-full max-w-7xl mx-auto px-gutter-desktop h-header-height flex items-center justify-between gap-space-lg">
           <div className="flex items-center gap-space-lg min-w-0">
             <Link href="/" className="flex items-center gap-space-md shrink-0">
-              <img
-                alt="Brand logo"
-                className="h-8 w-auto object-contain"
-                src="https://lh3.googleusercontent.com/aida/AEtjO1V_U6qg3PIcJPAwsgB2PIqlGXh7-7AaKQoFO211JBy5xI4_7fm7qpAsuMRizqvQBX3HmPf7x3cB0NfMxbNaM7RvErdjbuAKy61R4fdDNFXy12ulmfJNG5PMdTCRRt0V83mb_6l3ZZvtC6uHfQlOquH6LJUnaRsUcTdcQxK8JHvVrxIHGkabbk0xQWcxXoA32CfuMMmnb1CMPANZnfw2YAQFmx2BOEHhjA3omyCkMTvzbLI-_EFQE2aZpRNI"
-              />
+              <HeatScapeLogo size={32} animate={true} />
               <span className="font-headline-sm text-headline-sm text-on-surface font-bold tracking-tight">
-                HeatScape
+                Heat<span className="text-[#D97757]">Scape</span>
               </span>
             </Link>
             <div className="hidden md:flex items-center gap-space-xs px-space-md py-space-xs rounded-full bg-surface-container-low border border-surface-container-high/60 text-on-surface-variant font-label-sm text-label-sm">

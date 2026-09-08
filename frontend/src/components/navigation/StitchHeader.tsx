@@ -7,6 +7,7 @@ import { SensorTelemetryModal } from '@/components/modals/SensorTelemetryModal';
 import { SatelliteIngestModal } from '@/components/modals/SatelliteIngestModal';
 import { ExecutiveTourModal } from '@/components/modals/ExecutiveTourModal';
 import { LiveTelemetryTicker } from '@/components/telemetry/LiveTelemetryTicker';
+import { HeatScapeLogo } from '@/components/brand/HeatScapeLogo';
 
 import { useLanguage } from '@/lib/i18n';
 
@@ -28,7 +29,6 @@ export const StitchHeader: React.FC = () => {
     { label: t.coolNavigator, href: '/navigator' },
     { label: t.studioTerrain, href: '/studio' },
     { label: t.fieldOps, href: '/field' },
-    { label: t.pitchDeck, href: '/pitch' },
   ];
 
   return (
@@ -36,13 +36,11 @@ export const StitchHeader: React.FC = () => {
       <header className="w-full bg-[#000000] border-b border-[#222222] z-30 sticky top-0 px-4 py-2.5 flex items-center justify-between">
         {/* Brand & Live Region Pill */}
         <div className="flex items-center gap-4">
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-7 h-7 bg-primary-container flex items-center justify-center font-mono font-bold text-on-primary-container text-xs shadow-md rounded">
-              HS
-            </div>
+          <Link href="/" className="flex items-center gap-2.5 group">
+            <HeatScapeLogo size={30} animate={true} />
             <div>
               <div className="font-mono text-sm font-bold text-white tracking-wider flex items-center gap-1.5">
-                {t.appName} <span className="text-primary-container text-xs">// GCC</span>
+                {t.appName} <span className="text-[#D97757] text-xs font-semibold">// GCC</span>
               </div>
               <div className="text-[10px] text-gray-400 font-mono hidden sm:block">
                 {t.appSubtitle}
@@ -108,14 +106,6 @@ export const StitchHeader: React.FC = () => {
             </button>
           </div>
 
-          <button
-            onClick={() => setTourModalOpen(true)}
-            className="px-2.5 py-1 bg-gradient-to-r from-amber-500 to-orange-500 hover:opacity-90 text-black font-mono text-[11px] font-bold flex items-center gap-1.5 rounded shadow-sm cursor-pointer"
-            title="Start Interactive Hackathon Judge Tour"
-          >
-            <span className="material-symbols-outlined text-[14px]">auto_awesome</span>
-            <span>{t.judgeTour}</span>
-          </button>
           <button
             onClick={() => setSatelliteModalOpen(true)}
             className="px-2.5 py-1 bg-[#101010] hover:bg-[#181818] border border-cyan-800/50 hover:border-cyan-500 font-mono text-[11px] text-cyan-400 flex items-center gap-1.5 rounded transition-colors cursor-pointer"

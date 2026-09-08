@@ -25,7 +25,7 @@ export const HeatScapeCopilot: React.FC = () => {
     {
       id: 'welcome',
       sender: 'copilot',
-      text: `### 🤖 Chennai HeatScape Climate Copilot
+      text: `### Chennai HeatScape Climate Copilot
 I am your AI advisor for the **Greater Chennai Corporation Heat Action Plan (GRAP)**, urban microclimate physics, and spatial hotspot analysis.
 
 Try asking:
@@ -109,7 +109,7 @@ Try asking:
         {
           id: (Date.now() + 1).toString(),
           sender: 'copilot',
-          text: '⚠️ Communication timeout with GCC Climate Intelligence Core. Please try again.',
+          text: 'Notice: Communication timeout with GCC Climate Intelligence Core. Please try again.',
           timestamp: 'Just now',
         },
       ]);
@@ -144,7 +144,7 @@ Try asking:
         {
           id: Date.now().toString(),
           sender: 'copilot',
-          text: '🚒 **Misting Cannon Trucks Dispatched**: 6 high-pressure evaporative misting cannons mobilized from Ripon Building central depot to T. Nagar, Parrys, and Guindy transit corridors.',
+          text: '**Misting Cannon Trucks Dispatched**: 6 high-pressure evaporative misting cannons mobilized from Ripon Building central depot to T. Nagar, Parrys, and Guindy transit corridors.',
           timestamp: 'Just now',
         },
       ]);

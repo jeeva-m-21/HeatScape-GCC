@@ -25,6 +25,9 @@ class Settings(BaseSettings):
     BBOX_MAX_LON: float = 80.3350
     BBOX_MAX_LAT: float = 13.2450
 
+    # Google Cloud Platform & Maps API
+    GOOGLE_MAPS_API_KEY: str = "AIzaSyAWFtUnxI2yjqyAyxf7ZHbEDi6L7-TomZw"
+
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
 

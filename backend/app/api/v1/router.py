@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.api.v1.endpoints import heat, trajectories, interventions, scenarios, pipelines, sensors, heatwave, routing, ingest, ogc, terrain, copilot, incidents, ws, drone, hazard, models
+from app.api.v1.endpoints import heat, trajectories, interventions, scenarios, pipelines, sensors, heatwave, routing, ingest, ogc, terrain, copilot, incidents, ws, drone, hazard, models, google
 
 api_router = APIRouter()
 
@@ -20,6 +20,7 @@ api_router.include_router(ws.router, prefix="/ws", tags=["Real-Time WebSockets T
 api_router.include_router(drone.router, prefix="/drone", tags=["UAV & Drone Thermal Orthomosaics"])
 api_router.include_router(hazard.router, prefix="/hazard", tags=["Compound Multi-Hazard & Sponge Infrastructure"])
 api_router.include_router(models.router, prefix="/models", tags=["Machine Learning Models"])
+api_router.include_router(google.router, prefix="/google", tags=["Google Cloud Platform & Maps"])
 
 
 

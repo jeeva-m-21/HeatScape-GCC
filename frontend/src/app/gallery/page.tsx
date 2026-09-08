@@ -81,10 +81,10 @@ export default function StitchGalleryPage() {
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <div className="bg-[#182234] p-3 border border-[#334155] flex items-center gap-3">
-              <div className="w-8 h-8 rounded-none bg-[#F38020] border border-white/20" />
+              <div className="w-8 h-8 rounded-none bg-[#D97757] border border-white/20" />
               <div>
-                <div className="text-xs font-mono font-bold text-white">#F38020</div>
-                <div className="text-[10px] text-slate-400">Primary Accent</div>
+                <div className="text-xs font-mono font-bold text-white">#D97757</div>
+                <div className="text-[10px] text-slate-400">Claude Terracotta</div>
               </div>
             </div>
 

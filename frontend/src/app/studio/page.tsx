@@ -1319,8 +1319,8 @@ export default function StudioPage() {
                       </div>
                       <div className="mt-2 text-[11px] text-rose-400">
                         {probeDN >= 8100
-                          ? '🔥 Severe Heat Plume: Exceeds GCC Critical Safety Threshold'
-                          : '⚡ Moderate Thermal Exposure'}
+                          ? 'Severe Heat Plume: Exceeds GCC Critical Safety Threshold'
+                          : 'Moderate Thermal Exposure'}
                       </div>
                     </div>
                   </div>

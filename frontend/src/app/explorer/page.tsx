@@ -9,6 +9,8 @@ import { GeoJSONFeatureCollection, CellFeatureProperties } from '@/lib/types';
 import { downloadGeoJSON } from '@/lib/export-utils';
 import { SensorTelemetryModal } from '@/components/modals/SensorTelemetryModal';
 import { CouncilResolutionModal } from '@/components/modals/CouncilResolutionModal';
+import { HeatScapeLogo } from '@/components/brand/HeatScapeLogo';
+import { mergeWithMetropolitanGrid } from '@/lib/metropolitan-grid';
 
 const CHENNAI_PRESETS: Record<string, { center: [number, number]; ward: string; cell: string; anomaly: string; pop: string; canopy: string; impervious: string; zone: string }> = {
   't. nagar': { center: [80.233, 13.041], ward: 'T. Nagar • Ward 117', cell: 'CHE_1042', anomaly: '+4.8°C', pop: '14,200', canopy: '2.1%', impervious: '92%', zone: 'Zone X (Kodambakkam), Chennai' },
@@ -42,11 +44,20 @@ export default function TrajectoryExplorerPage() {
   const [imperviousVal, setImperviousVal] = useState('84%');
   const [activeLayer, setActiveLayer] = useState('Surface Temp');
   const [layerDropdownOpen, setLayerDropdownOpen] = useState(false);
-  const [displayMode, setDisplayMode] = useState<'normal' | 'full-heatmap' | 'grid' | 'prisms-3d'>('full-heatmap');
+  const [displayMode, setDisplayMode] = useState<'normal' | 'full-heatmap' | 'grid' | 'prisms-3d'>('grid');
   const [baseMapStyle, setBaseMapStyle] = useState<'dark' | 'voyager' | 'light'>('dark');
   const [heatmapOpacity, setHeatmapOpacity] = useState<number>(0.85);
   const [timeRange, setTimeRange] = useState<'12M' | '24M' | '36M' | '60M'>('36M');
   const storedDataRef = useRef<any>(null);
+
+  const displayModeRef = useRef(displayMode);
+  displayModeRef.current = displayMode;
+  const activeLayerRef = useRef(activeLayer);
+  activeLayerRef.current = activeLayer;
+  const heatmapOpacityRef = useRef(heatmapOpacity);
+  heatmapOpacityRef.current = heatmapOpacity;
+  const baseMapStyleRef = useRef(baseMapStyle);
+  baseMapStyleRef.current = baseMapStyle;
 
   // 2020-2030 Climate Projection Timeline state
   const [timelineYear, setTimelineYear] = useState<number>(2024);
@@ -187,38 +198,39 @@ export default function TrajectoryExplorerPage() {
             'interpolate',
             ['linear'],
             ['get', 'weight'],
-            0, 0.1,
-            2.5, 0.5,
+            0, 0.2,
+            2.5, 0.6,
             5.0, 1.0,
           ],
           'heatmap-intensity': [
             'interpolate',
             ['linear'],
             ['zoom'],
-            9, 0.8,
-            11, 1.4,
-            13, 2.6,
-            16, 4.0,
+            9, 0.9,
+            11, 1.5,
+            13, 2.2,
+            16, 3.2,
           ],
           'heatmap-color': [
             'interpolate',
             ['linear'],
             ['heatmap-density'],
             0, 'rgba(0, 0, 0, 0)',
-            0.15, 'rgba(16, 185, 129, 0.6)',  // Marine cooled emerald
-            0.35, 'rgba(234, 179, 8, 0.8)',   // Moderate warm yellow
-            0.55, 'rgba(249, 115, 22, 0.9)',  // Severe orange
-            0.75, 'rgba(239, 68, 68, 0.95)',  // Hot red
-            1.0, 'rgba(153, 27, 27, 1.0)',    // Critical core crimson
+            0.15, 'rgba(56, 189, 248, 0.75)',  // Marine cyan/blue
+            0.35, 'rgba(52, 211, 153, 0.85)',  // Moderate green
+            0.55, 'rgba(251, 191, 36, 0.9)',   // Warm amber
+            0.75, 'rgba(249, 115, 22, 0.95)',  // Severe orange
+            0.90, 'rgba(239, 68, 68, 0.98)',   // Hot red
+            1.0, 'rgba(153, 27, 27, 1.0)',     // Critical core crimson
           ],
           'heatmap-radius': [
             'interpolate',
             ['linear'],
             ['zoom'],
-            9, 35,
-            11, 70,
-            13, 115,
-            15, 185,
+            9, 22,
+            11, 44,
+            13, 72,
+            15, 105,
           ],
           'heatmap-opacity': 0.85,
         },
@@ -232,15 +244,17 @@ export default function TrajectoryExplorerPage() {
         source: 'heat-cells',
         paint: {
           'fill-color': [
-            'match',
-            ['get', 'trajectory_state'],
-            'PERSISTENT', '#f38020',
-            'EMERGING', '#ef4444',
-            'TEMPORARY', '#eab308',
-            'IMPROVING', '#10b981',
-            /* default */ '#64748b',
+            'interpolate',
+            ['linear'],
+            ['coalesce', ['get', 'mean_anomaly'], ['get', 'contextual_anomaly_celsius'], 2.4],
+            0.0, '#38bdf8',  // Cool marine blue (< 1.0°C)
+            1.5, '#34d399',  // Normal green (1.5°C)
+            2.5, '#fbbf24',  // Moderate amber (2.5°C)
+            3.5, '#fb923c',  // Elevated orange (3.5°C)
+            4.5, '#ef4444',  // Severe hotspot red (4.5°C)
+            5.5, '#991b1b',  // Critical core crimson (> 5.5°C)
           ],
-          'fill-opacity': 0.65,
+          'fill-opacity': 0.82,
         },
       });
     }
@@ -251,8 +265,8 @@ export default function TrajectoryExplorerPage() {
         type: 'line',
         source: 'heat-cells',
         paint: {
-          'line-color': '#273647',
-          'line-width': 1.0,
+          'line-color': '#0f172a',
+          'line-width': 0.8,
           'line-opacity': 0.85,
         },
       });
@@ -395,47 +409,78 @@ export default function TrajectoryExplorerPage() {
     try {
       if (layer === 'Surface Temp') {
         map.setPaintProperty('heat-cells-fill', 'fill-color', [
-          'match',
-          ['get', 'trajectory_state'],
-          'PERSISTENT', '#f38020',
-          'EMERGING', '#ef4444',
-          'TEMPORARY', '#eab308',
-          'IMPROVING', '#10b981',
-          /* default */ '#64748b',
+          'interpolate',
+          ['linear'],
+          ['coalesce', ['get', 'mean_anomaly'], ['get', 'contextual_anomaly_celsius'], 2.4],
+          0.0, '#38bdf8',  // Cool marine blue (< 1.0°C)
+          1.5, '#34d399',  // Normal green (1.5°C)
+          2.5, '#fbbf24',  // Moderate amber (2.5°C)
+          3.5, '#fb923c',  // Elevated orange (3.5°C)
+          4.5, '#ef4444',  // Severe hotspot red (4.5°C)
+          5.5, '#991b1b',  // Critical core crimson (> 5.5°C)
         ]);
+        map.setPaintProperty('heat-cells-fill', 'fill-opacity', 0.82);
       } else if (layer === 'NDVI Canopy') {
+        if (map.getLayer('heat-continuous-glow')) {
+          map.setLayoutProperty('heat-continuous-glow', 'visibility', 'none');
+        }
         map.setPaintProperty('heat-cells-fill', 'fill-color', [
           'interpolate',
           ['linear'],
           ['coalesce', ['get', 'tree_canopy_fraction'], 0.05],
-          0.0, '#f1f5f9',
-          0.04, '#fef08a',
-          0.10, '#86efac',
-          0.20, '#22c55e',
-          0.35, '#14532d',
+          0.00, '#292524', // Deficit stone/concrete barren
+          0.04, '#57534e', // Minimal vegetation
+          0.08, '#84cc16', // Sparse canopy lime
+          0.15, '#22c55e', // Moderate canopy green
+          0.25, '#15803d', // Healthy canopy emerald
+          0.35, '#052e16', // Dense lush forest
         ]);
+        map.setPaintProperty('heat-cells-fill', 'fill-opacity', 0.85);
       } else if (layer === 'Built Impervious') {
+        if (map.getLayer('heat-continuous-glow')) {
+          map.setLayoutProperty('heat-continuous-glow', 'visibility', 'none');
+        }
         map.setPaintProperty('heat-cells-fill', 'fill-color', [
           'interpolate',
           ['linear'],
           ['coalesce', ['get', 'impervious_fraction'], 0.8],
-          0.30, '#94a3b8',
-          0.55, '#64748b',
-          0.75, '#475569',
-          0.90, '#334155',
-          0.98, '#0f172a',
+          0.20, '#0ea5e9', // Cool pervious / soil / park
+          0.50, '#38bdf8', // Semi-pervious
+          0.70, '#fbbf24', // Urban built amber
+          0.85, '#f97316', // Dense asphalt orange
+          0.95, '#ef4444', // High heat absorbing sealed concrete
         ]);
+        map.setPaintProperty('heat-cells-fill', 'fill-opacity', 0.85);
       } else if (layer === 'Population Exposure') {
+        if (map.getLayer('heat-continuous-glow')) {
+          map.setLayoutProperty('heat-continuous-glow', 'visibility', 'none');
+        }
         map.setPaintProperty('heat-cells-fill', 'fill-color', [
           'interpolate',
           ['linear'],
           ['coalesce', ['get', 'population_density_sqkm'], 4000],
-          1000, '#38bdf8',
-          5000, '#818cf8',
-          12000, '#c084fc',
-          22000, '#f43f5e',
-          35000, '#be123c',
+          1000, '#06b6d4',  // Low exposure cyan
+          8000, '#6366f1',  // Moderate indigo
+          18000, '#a855f7', // High purple
+          28000, '#ec4899', // Dense pink
+          40000, '#e11d48', // Extreme crimson
         ]);
+        map.setPaintProperty('heat-cells-fill', 'fill-opacity', 0.85);
+      } else if (layer === 'Terrain Elevation') {
+        if (map.getLayer('heat-continuous-glow')) {
+          map.setLayoutProperty('heat-continuous-glow', 'visibility', 'none');
+        }
+        map.setPaintProperty('heat-cells-fill', 'fill-color', [
+          'interpolate',
+          ['linear'],
+          ['coalesce', ['get', 'elevation_m'], 12.0],
+          2.0, '#047857',   // Coastal lowlands (2m)
+          8.0, '#059669',   // Alluvial plain (8m)
+          16.0, '#d97706',  // Gentle rise (16m)
+          28.0, '#b45309',  // Inland plateau (28m)
+          50.0, '#78350f',  // Ridge topography (>50m)
+        ]);
+        map.setPaintProperty('heat-cells-fill', 'fill-opacity', 0.85);
       }
     } catch (err) {
       console.warn('Could not apply layer paint:', err);
@@ -443,9 +488,14 @@ export default function TrajectoryExplorerPage() {
   };
 
   const applyDisplayMode = (map: maplibregl.Map, mode: string, opacity: number = 0.85) => {
-    if (!map || !map.isStyleLoaded()) return;
+    if (!map) return;
 
     try {
+      // Re-add layers if missing
+      if (storedDataRef.current && (!map.getLayer('heat-cells-fill') || !map.getLayer('heat-continuous-glow'))) {
+        setupMapLayers(map, storedDataRef.current);
+      }
+
       if (mode === 'normal') {
         // Normal View: clean streets and normal map without heat obstruction
         if (map.getLayer('heat-continuous-glow')) {
@@ -455,14 +505,14 @@ export default function TrajectoryExplorerPage() {
           map.setPaintProperty('heat-cells-fill', 'fill-opacity', 0.0);
         }
         if (map.getLayer('heat-cells-line')) {
-          map.setPaintProperty('heat-cells-line', 'line-opacity', 0.3);
+          map.setPaintProperty('heat-cells-line', 'line-opacity', 0.2);
         }
         if (map.getLayer('heat-cells-3d-prisms')) {
           map.setLayoutProperty('heat-cells-3d-prisms', 'visibility', 'none');
         }
-        map.easeTo({ pitch: 0, bearing: 0, duration: 800 });
+        map.easeTo({ pitch: 0, bearing: 0, duration: 600 });
       } else if (mode === 'full-heatmap') {
-        // Full Continuous Heatmap Blanket
+        // Continuous Heatmap with interactive cell boundaries
         if (map.getLayer('heat-cells-3d-prisms')) {
           map.setLayoutProperty('heat-cells-3d-prisms', 'visibility', 'none');
         }
@@ -471,12 +521,12 @@ export default function TrajectoryExplorerPage() {
           map.setPaintProperty('heat-continuous-glow', 'heatmap-opacity', opacity);
         }
         if (map.getLayer('heat-cells-fill')) {
-          map.setPaintProperty('heat-cells-fill', 'fill-opacity', 0.0);
+          map.setPaintProperty('heat-cells-fill', 'fill-opacity', 0.35);
         }
         if (map.getLayer('heat-cells-line')) {
-          map.setPaintProperty('heat-cells-line', 'line-opacity', 0.15);
+          map.setPaintProperty('heat-cells-line', 'line-opacity', 0.25);
         }
-        map.easeTo({ pitch: 0, bearing: 0, duration: 800 });
+        map.easeTo({ pitch: 0, bearing: 0, duration: 600 });
       } else if (mode === 'grid') {
         // 100m Analytical Grid
         if (map.getLayer('heat-cells-3d-prisms')) {
@@ -486,12 +536,12 @@ export default function TrajectoryExplorerPage() {
           map.setLayoutProperty('heat-continuous-glow', 'visibility', 'none');
         }
         if (map.getLayer('heat-cells-fill')) {
-          map.setPaintProperty('heat-cells-fill', 'fill-opacity', 0.65);
+          map.setPaintProperty('heat-cells-fill', 'fill-opacity', 0.82);
         }
         if (map.getLayer('heat-cells-line')) {
           map.setPaintProperty('heat-cells-line', 'line-opacity', 0.85);
         }
-        map.easeTo({ pitch: 0, bearing: 0, duration: 800 });
+        map.easeTo({ pitch: 0, bearing: 0, duration: 600 });
       } else if (mode === 'prisms-3d') {
         // 3D Extrusion Prisms
         if (map.getLayer('heat-continuous-glow')) {
@@ -506,23 +556,34 @@ export default function TrajectoryExplorerPage() {
         if (map.getLayer('heat-cells-3d-prisms')) {
           map.setLayoutProperty('heat-cells-3d-prisms', 'visibility', 'visible');
         }
-        map.easeTo({ pitch: 55, bearing: -20, duration: 1000 });
+        map.easeTo({ pitch: 55, bearing: -20, duration: 800 });
       }
     } catch (err) {
       console.warn('Could not apply display mode:', err);
     }
   };
 
+  const handleDisplayModeChange = (newMode: 'normal' | 'full-heatmap' | 'grid' | 'prisms-3d') => {
+    setDisplayMode(newMode);
+    displayModeRef.current = newMode;
+    const map = mapRef.current;
+    if (map) {
+      applyDisplayMode(map, newMode, heatmapOpacityRef.current);
+    }
+  };
+
   const handleSwitchBaseStyle = (newStyle: 'dark' | 'voyager' | 'light') => {
+    if (newStyle === baseMapStyleRef.current) return;
     setBaseMapStyle(newStyle);
+    baseMapStyleRef.current = newStyle;
     const map = mapRef.current;
     if (!map) return;
     map.setStyle(BASE_MAP_STYLES[newStyle]);
     map.once('style.load', () => {
       if (storedDataRef.current) {
         setupMapLayers(map, storedDataRef.current);
-        applyDisplayMode(map, displayMode, heatmapOpacity);
-        applyLayerPaint(map, activeLayer);
+        applyDisplayMode(map, displayModeRef.current, heatmapOpacityRef.current);
+        applyLayerPaint(map, activeLayerRef.current);
       }
     });
   };
@@ -616,8 +677,8 @@ export default function TrajectoryExplorerPage() {
 
       map.on('load', async () => {
         try {
-          const data = await apiClient.getCellsGeoJSON();
-          if (!data) return;
+          const backendData = await apiClient.getCellsGeoJSON().catch(() => null);
+          const data = mergeWithMetropolitanGrid(backendData);
           storedDataRef.current = data;
           setupMapLayers(map, data);
           applyDisplayMode(map, displayMode, heatmapOpacity);
@@ -734,13 +795,9 @@ export default function TrajectoryExplorerPage() {
         <div className="w-full h-header-height px-gutter-desktop flex items-center justify-between gap-space-lg">
           <div className="flex items-center gap-space-lg min-w-0">
             <Link href="/" className="flex items-center gap-space-md shrink-0">
-              <img
-                alt="Brand logo"
-                className="h-8 w-auto object-contain"
-                src="https://lh3.googleusercontent.com/aida/AEtjO1V_U6qg3PIcJPAwsgB2PIqlGXh7-7AaKQoFO211JBy5xI4_7fm7qpAsuMRizqvQBX3HmPf7x3cB0NfMxbNaM7RvErdjbuAKy61R4fdDNFXy12ulmfJNG5PMdTCRRt0V83mb_6l3ZZvtC6uHfQlOquH6LJUnaRsUcTdcQxK8JHvVrxIHGkabbk0xQWcxXoA32CfuMMmnb1CMPANZnfw2YAQFmx2BOEHhjA3omyCkMTvzbLI-_EFQE2aZpRNI"
-              />
+              <HeatScapeLogo size={32} animate={true} />
               <span className="font-headline-sm text-headline-sm text-on-surface font-bold tracking-tight hidden sm:inline-block">
-                HeatScape
+                Heat<span className="text-[#D97757]">Scape</span>
               </span>
             </Link>
             <div className="h-4 w-px bg-surface-container-highest/60 hidden md:block"></div>
@@ -959,25 +1016,22 @@ export default function TrajectoryExplorerPage() {
                 {/* View Mode Switcher: Normal View vs Full Heatmap vs Grid vs 3D Prisms */}
                 <div className="flex items-center rounded-xl bg-surface-container-low p-1 border border-surface-container-highest/60">
                   <button
-                    onClick={() => {
-                      setDisplayMode('normal');
-                      if (baseMapStyle !== 'voyager') handleSwitchBaseStyle('voyager');
-                    }}
+                    onClick={() => handleDisplayModeChange('normal')}
                     className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg font-label-sm text-label-sm transition-all ${
                       displayMode === 'normal'
                         ? 'bg-emerald-500 text-black font-semibold shadow-sm'
                         : 'text-on-surface-variant hover:text-on-surface'
                     }`}
-                    title="Standard colorful street map (Carto Voyager) with roads, parks, coast, and landmarks"
+                    title="Normal city basemap with roads, parks, coast, and landmarks"
                   >
                     <span className="material-symbols-outlined text-[15px]">map</span>
                     <span>Normal View</span>
                   </button>
                   <button
-                    onClick={() => setDisplayMode('full-heatmap')}
+                    onClick={() => handleDisplayModeChange('full-heatmap')}
                     className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg font-label-sm text-label-sm transition-all ${
                       displayMode === 'full-heatmap'
-                        ? 'bg-primary text-on-primary font-semibold shadow-[0_0_12px_rgba(243,128,32,0.4)]'
+                        ? 'bg-primary text-on-primary font-semibold shadow-sm'
                         : 'text-on-surface-variant hover:text-on-surface'
                     }`}
                     title="Full continuous thermodynamic heat blanket across all 15 GCC zones"
@@ -986,7 +1040,7 @@ export default function TrajectoryExplorerPage() {
                     <span>Full Heatmap</span>
                   </button>
                   <button
-                    onClick={() => setDisplayMode('grid')}
+                    onClick={() => handleDisplayModeChange('grid')}
                     className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg font-label-sm text-label-sm transition-all ${
                       displayMode === 'grid'
                         ? 'bg-primary-container text-on-primary-container font-semibold shadow-sm'
@@ -998,10 +1052,10 @@ export default function TrajectoryExplorerPage() {
                     <span>100m Grid</span>
                   </button>
                   <button
-                    onClick={() => setDisplayMode('prisms-3d')}
+                    onClick={() => handleDisplayModeChange('prisms-3d')}
                     className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg font-label-sm text-label-sm transition-all ${
                       displayMode === 'prisms-3d'
-                        ? 'bg-cyan-500 text-black font-semibold shadow-[0_0_12px_rgba(6,182,212,0.4)]'
+                        ? 'bg-cyan-500 text-black font-semibold shadow-sm'
                         : 'text-on-surface-variant hover:text-on-surface'
                     }`}
                     title="Render 3D Hexagonal Extruded Prisms proportional to Heat Severity"
@@ -1014,7 +1068,7 @@ export default function TrajectoryExplorerPage() {
                 {/* Heatmap Opacity Slider (visible when Full Heatmap is active) */}
                 {displayMode === 'full-heatmap' && (
                   <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-surface-container-low border border-surface-container-highest/60 text-xs font-mono">
-                    <span className="text-on-surface-variant text-[11px]">Glow:</span>
+                    <span className="text-on-surface-variant text-[11px]">Opacity:</span>
                     <input
                       type="range"
                       min="0.2"
@@ -1035,36 +1089,39 @@ export default function TrajectoryExplorerPage() {
                 <div className="hidden lg:flex items-center rounded-xl bg-surface-container-low p-1 border border-surface-container-highest/60 text-xs">
                   <button
                     onClick={() => handleSwitchBaseStyle('voyager')}
-                    className={`px-2 py-1 rounded-lg font-medium transition-all ${
+                    className={`px-2.5 py-1 rounded-lg font-medium transition-all flex items-center gap-1 ${
                       baseMapStyle === 'voyager'
                         ? 'bg-surface-container-high text-emerald-400 font-semibold shadow-sm'
                         : 'text-on-surface-variant hover:text-on-surface'
                     }`}
                     title="Streets Base Map (Carto Voyager)"
                   >
-                    🗺️ Streets
+                    <span className="material-symbols-outlined text-[14px]">map</span>
+                    <span>Streets</span>
                   </button>
                   <button
                     onClick={() => handleSwitchBaseStyle('dark')}
-                    className={`px-2 py-1 rounded-lg font-medium transition-all ${
+                    className={`px-2.5 py-1 rounded-lg font-medium transition-all flex items-center gap-1 ${
                       baseMapStyle === 'dark'
                         ? 'bg-surface-container-high text-cyan-400 font-semibold shadow-sm'
                         : 'text-on-surface-variant hover:text-on-surface'
                     }`}
                     title="Dark Matter Base Map"
                   >
-                    🌑 Dark
+                    <span className="material-symbols-outlined text-[14px]">dark_mode</span>
+                    <span>Dark</span>
                   </button>
                   <button
                     onClick={() => handleSwitchBaseStyle('light')}
-                    className={`px-2 py-1 rounded-lg font-medium transition-all ${
+                    className={`px-2.5 py-1 rounded-lg font-medium transition-all flex items-center gap-1 ${
                       baseMapStyle === 'light'
                         ? 'bg-surface-container-high text-amber-400 font-semibold shadow-sm'
                         : 'text-on-surface-variant hover:text-on-surface'
                     }`}
                     title="Positron Light Base Map"
                   >
-                    ☀️ Light
+                    <span className="material-symbols-outlined text-[14px]">light_mode</span>
+                    <span>Light</span>
                   </button>
                 </div>
 
@@ -1127,7 +1184,7 @@ export default function TrajectoryExplorerPage() {
                   </button>
                   {layerDropdownOpen && (
                     <div className="absolute right-0 top-full mt-1 w-48 rounded-xl bg-surface-container-lowest border border-surface-container-highest/60 shadow-2xl p-1 z-50">
-                      {['Surface Temp', 'NDVI Canopy', 'Built Impervious', 'Population Exposure'].map((item) => (
+                      {['Surface Temp', 'NDVI Canopy', 'Built Impervious', 'Population Exposure', 'Terrain Elevation'].map((item) => (
                         <button
                           key={item}
                           onClick={() => {
@@ -1169,41 +1226,41 @@ export default function TrajectoryExplorerPage() {
               <div
                 className={`w-56 h-2 rounded-full shadow-inner ${
                   activeLayer === 'Surface Temp'
-                    ? 'bg-gradient-to-r from-emerald-500 via-amber-400 to-red-500'
+                    ? 'bg-gradient-to-r from-sky-400 via-amber-400 to-red-600'
                     : activeLayer === 'NDVI Canopy'
-                    ? 'bg-gradient-to-r from-slate-200 via-emerald-400 to-green-900'
+                    ? 'bg-gradient-to-r from-stone-800 via-lime-500 to-emerald-950'
                     : activeLayer === 'Built Impervious'
-                    ? 'bg-gradient-to-r from-slate-400 via-slate-700 to-slate-950'
-                    : 'bg-gradient-to-r from-sky-400 via-purple-500 to-rose-700'
+                    ? 'bg-gradient-to-r from-sky-500 via-amber-400 to-red-500'
+                    : 'bg-gradient-to-r from-cyan-400 via-purple-500 to-rose-600'
                 }`}
               ></div>
               <div className="flex items-center justify-between font-code-sm text-code-sm text-on-surface-variant">
                 {activeLayer === 'Surface Temp' && (
                   <>
-                    <span className="text-emerald-400">-2.0°C Cool</span>
-                    <span className="text-on-surface">Baseline</span>
-                    <span className="text-primary">+4.5°C Hot</span>
+                    <span className="text-sky-400">&lt;1°C Marine</span>
+                    <span className="text-amber-400">+2.5°C</span>
+                    <span className="text-red-500">&gt;+5°C Severe</span>
                   </>
                 )}
                 {activeLayer === 'NDVI Canopy' && (
                   <>
-                    <span className="text-slate-300">0% Deficit</span>
-                    <span className="text-emerald-400">12% Target</span>
-                    <span className="text-green-500">&gt;35% Canopy</span>
+                    <span className="text-stone-400">0% Barren</span>
+                    <span className="text-lime-400">15% Canopy</span>
+                    <span className="text-emerald-400">&gt;35% Dense</span>
                   </>
                 )}
                 {activeLayer === 'Built Impervious' && (
                   <>
-                    <span className="text-slate-400">30% Pervious</span>
-                    <span className="text-slate-200">70% Moderate</span>
-                    <span className="text-slate-100">&gt;90% Sealed</span>
+                    <span className="text-sky-400">&lt;30% Pervious</span>
+                    <span className="text-amber-400">70% Built</span>
+                    <span className="text-red-400">&gt;95% Sealed</span>
                   </>
                 )}
                 {activeLayer === 'Population Exposure' && (
                   <>
-                    <span className="text-sky-400">&lt;2k /km²</span>
-                    <span className="text-purple-400">10k /km²</span>
-                    <span className="text-rose-400">&gt;30k Dense</span>
+                    <span className="text-cyan-400">&lt;5k /km²</span>
+                    <span className="text-purple-400">18k /km²</span>
+                    <span className="text-rose-400">&gt;40k Dense</span>
                   </>
                 )}
               </div>

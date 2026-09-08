@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { apiClient } from '@/lib/api-client';
 import { TenderManifest, ScenarioComparisonResponse, CouncilBriefResponse, SensorTelemetryResponse } from '@/lib/types';
+import { HeatScapeLogo } from '@/components/brand/HeatScapeLogo';
 
 export default function CoolingScenarioPlannerPage() {
   const [budget, setBudget] = useState(5000000); // 50 Lakhs
@@ -216,13 +217,9 @@ export default function CoolingScenarioPlannerPage() {
         <div className="w-full h-header-height px-gutter-desktop flex items-center justify-between gap-space-lg">
           <div className="flex items-center gap-space-lg min-w-0">
             <Link href="/" className="flex items-center gap-space-md shrink-0">
-              <img
-                alt="Brand logo"
-                className="h-8 w-auto object-contain"
-                src="https://lh3.googleusercontent.com/aida/AEtjO1V_U6qg3PIcJPAwsgB2PIqlGXh7-7AaKQoFO211JBy5xI4_7fm7qpAsuMRizqvQBX3HmPf7x3cB0NfMxbNaM7RvErdjbuAKy61R4fdDNFXy12ulmfJNG5PMdTCRRt0V83mb_6l3ZZvtC6uHfQlOquH6LJUnaRsUcTdcQxK8JHvVrxIHGkabbk0xQWcxXoA32CfuMMmnb1CMPANZnfw2YAQFmx2BOEHhjA3omyCkMTvzbLI-_EFQE2aZpRNI"
-              />
+              <HeatScapeLogo size={32} animate={true} />
               <span className="font-headline-sm text-headline-sm text-on-surface font-bold tracking-tight hidden sm:inline-block">
-                HeatScape
+                Heat<span className="text-[#D97757]">Scape</span>
               </span>
             </Link>
             <div className="h-4 w-px bg-surface-container-highest/60 hidden md:block"></div>

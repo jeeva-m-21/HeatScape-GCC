@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { HeatScapeLogo } from '@/components/brand/HeatScapeLogo';
 
 export default function PostInterventionImpactMonitoringPage() {
   return (
@@ -10,14 +11,10 @@ export default function PostInterventionImpactMonitoringPage() {
       <aside className="fixed left-0 top-0 h-full w-sidebar-width bg-surface-container-low z-50 flex flex-col justify-between shadow-[0_1px_8px_rgba(0,0,0,0.04)] border-r border-surface-container-highest/40">
         <div className="flex flex-col">
           <Link href="/" className="h-header-height flex items-center px-space-md gap-space-sm bg-surface-container-lowest/50">
-            <img
-              alt="Brand logo"
-              className="h-8 w-auto object-contain"
-              src="https://lh3.googleusercontent.com/aida/AEtjO1V_U6qg3PIcJPAwsgB2PIqlGXh7-7AaKQoFO211JBy5xI4_7fm7qpAsuMRizqvQBX3HmPf7x3cB0NfMxbNaM7RvErdjbuAKy61R4fdDNFXy12ulmfJNG5PMdTCRRt0V83mb_6l3ZZvtC6uHfQlOquH6LJUnaRsUcTdcQxK8JHvVrxIHGkabbk0xQWcxXoA32CfuMMmnb1CMPANZnfw2YAQFmx2BOEHhjA3omyCkMTvzbLI-_EFQE2aZpRNI"
-            />
+            <HeatScapeLogo size={32} animate={true} />
             <div className="flex flex-col">
               <span className="font-headline-sm text-headline-sm tracking-tight text-on-surface leading-none">
-                HeatScape
+                Heat<span className="text-[#D97757]">Scape</span>
               </span>
               <span className="font-label-sm text-label-sm text-primary tracking-wide uppercase">
                 Chennai Grid

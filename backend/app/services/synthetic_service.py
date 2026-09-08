@@ -73,19 +73,28 @@ class SyntheticSeedService:
         random.seed(42)
         np.random.seed(42)
 
-        ratio_north = 0.25
-        ratio_central = 0.42
-        ratio_south = 0.33
-
-        c_north = max(1, int(count * ratio_north))
-        c_central = max(1, int(count * ratio_central))
-        c_south = max(1, count - c_north - c_central)
-
-        clusters = [
-            {"zone": "ZONE_05_NORTH", "ward_prefix": "WARD_N", "center_lon": 80.280, "center_lat": 13.100, "count": c_north},
-            {"zone": "ZONE_08_CENTRAL", "ward_prefix": "WARD_C", "center_lon": 80.230, "center_lat": 13.040, "count": c_central},
-            {"zone": "ZONE_13_SOUTH", "ward_prefix": "WARD_S", "center_lon": 80.220, "center_lat": 12.980, "count": c_south},
+        zone_configs = [
+            {"zone": "ZONE_01_THIRUVOTTIYUR", "ward_prefix": "WARD_01", "center_lon": 80.300, "center_lat": 13.160},
+            {"zone": "ZONE_02_MANALI", "ward_prefix": "WARD_02", "center_lon": 80.260, "center_lat": 13.170},
+            {"zone": "ZONE_03_MADHAVARAM", "ward_prefix": "WARD_03", "center_lon": 80.231, "center_lat": 13.148},
+            {"zone": "ZONE_04_TONDIARPET", "ward_prefix": "WARD_04", "center_lon": 80.290, "center_lat": 13.125},
+            {"zone": "ZONE_05_ROYAPURAM", "ward_prefix": "WARD_05", "center_lon": 80.295, "center_lat": 13.100},
+            {"zone": "ZONE_06_THIRU_VI_KA", "ward_prefix": "WARD_06", "center_lon": 80.245, "center_lat": 13.105},
+            {"zone": "ZONE_07_AMBATTUR", "ward_prefix": "WARD_07", "center_lon": 80.155, "center_lat": 13.110},
+            {"zone": "ZONE_08_ANNA_NAGAR", "ward_prefix": "WARD_08", "center_lon": 80.215, "center_lat": 13.085},
+            {"zone": "ZONE_09_TEYNAMPET", "ward_prefix": "WARD_09", "center_lon": 80.245, "center_lat": 13.040},
+            {"zone": "ZONE_10_KODAMBAKKAM", "ward_prefix": "WARD_10", "center_lon": 80.215, "center_lat": 13.045},
+            {"zone": "ZONE_11_VALASARAVAKKAM", "ward_prefix": "WARD_11", "center_lon": 80.170, "center_lat": 13.040},
+            {"zone": "ZONE_12_ALANDUR", "ward_prefix": "WARD_12", "center_lon": 80.200, "center_lat": 13.000},
+            {"zone": "ZONE_13_ADYAR", "ward_prefix": "WARD_13", "center_lon": 80.255, "center_lat": 13.006},
+            {"zone": "ZONE_14_PERUNGUDI", "ward_prefix": "WARD_14", "center_lon": 80.240, "center_lat": 12.960},
+            {"zone": "ZONE_15_SHOLINGANALLUR", "ward_prefix": "WARD_15", "center_lon": 80.228, "center_lat": 12.900},
         ]
+
+        per_zone = max(10, count // len(zone_configs))
+        clusters = []
+        for z in zone_configs:
+            clusters.append({**z, "count": per_zone})
 
         cells = []
         cell_index = 1

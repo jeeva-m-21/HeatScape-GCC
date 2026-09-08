@@ -1,13 +1,16 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import maplibregl from 'maplibre-gl';
+import 'maplibre-gl/dist/maplibre-gl.css';
 import { apiClient } from '@/lib/api-client';
 import { TenderManifest } from '@/lib/types';
 import { SensorTelemetryModal } from '@/components/modals/SensorTelemetryModal';
 import { downloadGeoJSON } from '@/lib/export-utils';
+import { HeatScapeLogo } from '@/components/brand/HeatScapeLogo';
 
-type SpatialMode = 'thermal' | 'satellite' | 'street' | 'vulnerability' | 'continuous_kde';
+type SpatialMode = 'thermal' | 'satellite' | 'street' | 'vulnerability';
 type WardTab = 'overview' | 'whymatters' | 'interventions' | 'historical';
 
 interface WardDetail {
@@ -25,9 +28,13 @@ interface WardDetail {
   impervious: string;
   canopy: string;
   forecast2027: string;
-  cx: number;
-  cy: number;
+  center: [number, number];
 }
+
+const MAP_STYLES: Record<string, string> = {
+  dark: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
+  voyager: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
+};
 
 const WARDS_DATA: Record<string, WardDetail> = {
   '114': {
@@ -45,8 +52,7 @@ const WARDS_DATA: Record<string, WardDetail> = {
     impervious: '84%',
     canopy: '4.1%',
     forecast2027: '+3.6°C',
-    cx: 495,
-    cy: 305,
+    center: [80.245, 13.040],
   },
   '117': {
     id: '117',
@@ -63,8 +69,7 @@ const WARDS_DATA: Record<string, WardDetail> = {
     impervious: '93%',
     canopy: '2.3%',
     forecast2027: '+4.9°C',
-    cx: 325,
-    cy: 245,
+    center: [80.233, 13.041],
   },
   '119': {
     id: '119',
@@ -81,15 +86,26 @@ const WARDS_DATA: Record<string, WardDetail> = {
     impervious: '76%',
     canopy: '7.8%',
     forecast2027: '+2.4°C',
-    cx: 390,
-    cy: 350,
+    center: [80.228, 13.030],
   },
+};
+
+const CHENNAI_PRESETS: Record<string, { center: [number, number]; key: string }> = {
+  'teynampet': { center: [80.245, 13.040], key: '114' },
+  't. nagar': { center: [80.233, 13.041], key: '117' },
+  'tnagar': { center: [80.233, 13.041], key: '117' },
+  'cit nagar': { center: [80.228, 13.030], key: '119' },
+  'guindy': { center: [80.212, 13.008], key: '117' },
+  'george town': { center: [80.285, 13.090], key: '117' },
+  'anna nagar': { center: [80.215, 13.085], key: '114' },
+  'velachery': { center: [80.220, 12.975], key: '119' },
 };
 
 export default function MultiViewScreen() {
   const [activeMode, setActiveMode] = useState<SpatialMode>('thermal');
   const [activeTab, setActiveTab] = useState<WardTab>('overview');
   const [selectedWardKey, setSelectedWardKey] = useState<string>('114');
+  const [selectedCellId, setSelectedCellId] = useState<string>('CHE_1042');
   const [drawerOpen, setDrawerOpen] = useState<boolean>(true);
   const [searchQuery, setSearchQuery] = useState<string>('Ward 114 • Teynampet');
   const [filterState, setFilterState] = useState<'all' | 'emerging' | 'hotspots'>('all');
@@ -97,15 +113,306 @@ export default function MultiViewScreen() {
   const [sensorModalOpen, setSensorModalOpen] = useState<boolean>(false);
   const [tenderManifest, setTenderManifest] = useState<TenderManifest | null>(null);
   const [tenderLoading, setTenderLoading] = useState<boolean>(false);
-  const [zoomLevel, setZoomLevel] = useState<number>(1);
   const [is3DTilt, setIs3DTilt] = useState<boolean>(false);
 
+  const mapContainerRef = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<maplibregl.Map | null>(null);
+  const popupRef = useRef<maplibregl.Popup | null>(null);
+  const storedDataRef = useRef<any>(null);
+  const currentBaseStyleRef = useRef<'dark' | 'voyager'>('dark');
+  const activeModeRef = useRef<SpatialMode>(activeMode);
+  activeModeRef.current = activeMode;
+
   const currentWard = WARDS_DATA[selectedWardKey] || WARDS_DATA['114'];
+
+  const applyModePaint = (map: maplibregl.Map, mode: SpatialMode) => {
+    if (!map) return;
+    if (storedDataRef.current && !map.getLayer('heat-cells-fill')) {
+      setupMapLayers(map, storedDataRef.current);
+    }
+    if (!map.getLayer('heat-cells-fill')) return;
+    try {
+      if (mode === 'thermal') {
+        map.setPaintProperty('heat-cells-fill', 'fill-color', [
+          'interpolate',
+          ['linear'],
+          ['coalesce', ['get', 'mean_anomaly'], ['get', 'contextual_anomaly_celsius'], 2.4],
+          0.0, '#38bdf8',  // Cool marine blue (< 1.0°C)
+          1.5, '#34d399',  // Normal green (1.5°C)
+          2.5, '#fbbf24',  // Moderate amber (2.5°C)
+          3.5, '#fb923c',  // Elevated orange (3.5°C)
+          4.5, '#ef4444',  // Severe hotspot red (4.5°C)
+          5.5, '#991b1b',  // Critical core crimson (> 5.5°C)
+        ]);
+        map.setPaintProperty('heat-cells-fill', 'fill-opacity', 0.82);
+      } else if (mode === 'satellite') {
+        map.setPaintProperty('heat-cells-fill', 'fill-color', [
+          'interpolate',
+          ['linear'],
+          ['coalesce', ['get', 'tree_canopy_fraction'], 0.05],
+          0.00, '#292524', // Deficit stone/concrete barren
+          0.04, '#57534e', // Minimal vegetation
+          0.08, '#84cc16', // Sparse canopy lime
+          0.15, '#22c55e', // Moderate canopy green
+          0.25, '#15803d', // Healthy canopy emerald
+          0.35, '#052e16', // Dense lush forest
+        ]);
+        map.setPaintProperty('heat-cells-fill', 'fill-opacity', 0.85);
+      } else if (mode === 'street') {
+        map.setPaintProperty('heat-cells-fill', 'fill-color', [
+          'interpolate',
+          ['linear'],
+          ['coalesce', ['get', 'impervious_fraction'], 0.8],
+          0.20, '#0ea5e9', // Cool pervious / soil / park
+          0.50, '#38bdf8', // Semi-pervious
+          0.70, '#fbbf24', // Urban built amber
+          0.85, '#f97316', // Dense asphalt orange
+          0.95, '#ef4444', // High heat absorbing sealed concrete
+        ]);
+        map.setPaintProperty('heat-cells-fill', 'fill-opacity', 0.78);
+      } else if (mode === 'vulnerability') {
+        map.setPaintProperty('heat-cells-fill', 'fill-color', [
+          'interpolate',
+          ['linear'],
+          ['coalesce', ['get', 'population_density_sqkm'], 4000],
+          1000, '#06b6d4',  // Low exposure cyan
+          8000, '#6366f1',  // Moderate indigo
+          18000, '#a855f7', // High purple
+          28000, '#ec4899', // Dense pink
+          40000, '#e11d48', // Extreme crimson
+        ]);
+        map.setPaintProperty('heat-cells-fill', 'fill-opacity', 0.85);
+      }
+    } catch (err) {
+      console.warn('Could not apply mode paint:', err);
+    }
+  };
+
+  const setupMapLayers = (map: maplibregl.Map, data: any) => {
+    if (!map || !data) return;
+
+    if (!map.getSource('heat-cells')) {
+      map.addSource('heat-cells', {
+        type: 'geojson',
+        data: data,
+      });
+    }
+
+    if (!map.getLayer('heat-cells-fill')) {
+      map.addLayer({
+        id: 'heat-cells-fill',
+        type: 'fill',
+        source: 'heat-cells',
+        paint: {
+          'fill-color': [
+            'interpolate',
+            ['linear'],
+            ['coalesce', ['get', 'mean_anomaly'], ['get', 'contextual_anomaly_celsius'], 2.4],
+            0.0, '#38bdf8',
+            1.5, '#34d399',
+            2.5, '#fbbf24',
+            3.5, '#fb923c',
+            4.5, '#ef4444',
+            5.5, '#991b1b',
+          ],
+          'fill-opacity': 0.82,
+        },
+      });
+    }
+
+    if (!map.getLayer('heat-cells-line')) {
+      map.addLayer({
+        id: 'heat-cells-line',
+        type: 'line',
+        source: 'heat-cells',
+        paint: {
+          'line-color': '#0f172a',
+          'line-width': 0.8,
+          'line-opacity': 0.75,
+        },
+      });
+    }
+
+    if (!map.getLayer('heat-cell-selected-outline')) {
+      map.addLayer({
+        id: 'heat-cell-selected-outline',
+        type: 'line',
+        source: 'heat-cells',
+        paint: {
+          'line-color': '#00f0ff',
+          'line-width': 3.5,
+          'line-opacity': 1.0,
+        },
+        filter: ['==', ['get', 'cell_id'], selectedCellId],
+      });
+    }
+
+    const showHoverPopup = (e: any) => {
+      if (!e.features || !e.features[0]) return;
+      map.getCanvas().style.cursor = 'pointer';
+      const p = e.features[0].properties;
+      const stateBadge =
+        p.trajectory_state === 'PERSISTENT'
+          ? '<span style="background:rgba(217,119,87,0.25);color:#D97757;padding:2px 6px;border-radius:4px;font-size:10px;font-weight:bold;">PERSISTENT</span>'
+          : p.trajectory_state === 'EMERGING'
+          ? '<span style="background:rgba(239,68,68,0.25);color:#ef4444;padding:2px 6px;border-radius:4px;font-size:10px;font-weight:bold;">EMERGING</span>'
+          : '<span style="background:rgba(16,185,129,0.25);color:#10b981;padding:2px 6px;border-radius:4px;font-size:10px;font-weight:bold;">IMPROVING</span>';
+
+      const html = `
+        <div style="background:#09090b;border:1px solid #3f3f46;border-radius:10px;padding:8px 12px;font-family:ui-monospace,monospace;font-size:11px;color:#f4f4f5;box-shadow:0 8px 24px rgba(0,0,0,0.8);min-width:180px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;gap:8px;">
+            <strong style="color:#38bdf8;">Cell ${p.cell_id || 'CHE_1042'}</strong>
+            ${stateBadge}
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:2px;">
+            <span style="color:#a1a1aa;">Surface Anomaly:</span>
+            <span style="color:#fb923c;font-weight:bold;">+${Number(p.mean_anomaly || p.contextual_anomaly_celsius || 2.4).toFixed(1)}°C</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:2px;">
+            <span style="color:#a1a1aa;">Tree Canopy:</span>
+            <span style="color:#4ade80;">${(Number(p.tree_canopy_fraction || 0.05) * 100).toFixed(1)}%</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:2px;">
+            <span style="color:#a1a1aa;">Impervious:</span>
+            <span style="color:#cbd5e1;">${(Number(p.impervious_fraction || 0.82) * 100).toFixed(0)}%</span>
+          </div>
+        </div>
+      `;
+      if (!popupRef.current) {
+        popupRef.current = new maplibregl.Popup({
+          closeButton: false,
+          closeOnClick: false,
+          className: 'custom-heatscape-popup',
+          offset: 14,
+        });
+      }
+      popupRef.current.setLngLat(e.lngLat).setHTML(html).addTo(map);
+    };
+
+    const hideHoverPopup = () => {
+      map.getCanvas().style.cursor = '';
+      if (popupRef.current) popupRef.current.remove();
+    };
+
+    map.on('mousemove', 'heat-cells-fill', showHoverPopup);
+    map.on('mouseleave', 'heat-cells-fill', hideHoverPopup);
+
+    map.on('click', 'heat-cells-fill', (e) => {
+      if (!e.features || !e.features[0]) return;
+      const p = e.features[0].properties;
+      const cid = p.cell_id || 'CHE_1042';
+      setSelectedCellId(cid);
+      setDrawerOpen(true);
+
+      if (map.getLayer('heat-cell-selected-outline')) {
+        map.setFilter('heat-cell-selected-outline', ['==', ['get', 'cell_id'], cid]);
+      }
+
+      // Update current ward view if it matches a preset or updates custom
+      const matchedKey = Object.keys(WARDS_DATA).find((k) =>
+        (p.ward_id || '').includes(k) || (p.ward_name || '').includes(WARDS_DATA[k].name)
+      );
+      if (matchedKey) {
+        setSelectedWardKey(matchedKey);
+        setSearchQuery(WARDS_DATA[matchedKey].name);
+      }
+    });
+  };
+
+  useEffect(() => {
+    if (!mapContainerRef.current || mapRef.current) return;
+
+    try {
+      const initialStyle = activeMode === 'street' ? MAP_STYLES.voyager : MAP_STYLES.dark;
+      const map = new maplibregl.Map({
+        container: mapContainerRef.current,
+        style: initialStyle,
+        center: [80.24, 13.04],
+        zoom: 12.6,
+        pitch: 0,
+        attributionControl: false,
+      });
+
+      map.on('load', async () => {
+        try {
+          const data = await apiClient.getCellsGeoJSON();
+          if (!data) return;
+          storedDataRef.current = data;
+          setupMapLayers(map, data);
+          applyModePaint(map, activeMode);
+        } catch (err) {
+          console.warn('Multiview map data loading failed:', err);
+        }
+      });
+
+      mapRef.current = map;
+    } catch (err) {
+      console.warn('MapLibre GL failed to initialize in MultiView:', err);
+    }
+
+    return () => {
+      if (mapRef.current) {
+        mapRef.current.remove();
+        mapRef.current = null;
+      }
+    };
+  }, []);
+
+  // Update mode paint when activeMode changes
+  const handleModeChange = (newMode: SpatialMode) => {
+    setActiveMode(newMode);
+    activeModeRef.current = newMode;
+    const map = mapRef.current;
+    if (!map) return;
+
+    const desiredStyleName: 'dark' | 'voyager' = newMode === 'street' ? 'voyager' : 'dark';
+
+    // Only reload the style if we need a different basemap (e.g. Dark Matter vs Voyager Street)
+    if (desiredStyleName !== currentBaseStyleRef.current) {
+      currentBaseStyleRef.current = desiredStyleName;
+      map.setStyle(MAP_STYLES[desiredStyleName]);
+      map.once('style.load', () => {
+        if (storedDataRef.current) {
+          setupMapLayers(map, storedDataRef.current);
+          applyModePaint(map, activeModeRef.current);
+        }
+      });
+    } else {
+      // Same basemap style: instantly switch paint without tearing down the map
+      if (storedDataRef.current && !map.getLayer('heat-cells-fill')) {
+        setupMapLayers(map, storedDataRef.current);
+      }
+      applyModePaint(map, newMode);
+    }
+  };
 
   const handleSelectWard = (key: string) => {
     setSelectedWardKey(key);
     setDrawerOpen(true);
     setSearchQuery(WARDS_DATA[key]?.name || '');
+
+    const target = WARDS_DATA[key];
+    if (target && mapRef.current) {
+      mapRef.current.flyTo({
+        center: target.center,
+        zoom: 14.5,
+        duration: 1000,
+      });
+    }
+  };
+
+  const handleFilter = (filter: 'all' | 'emerging' | 'hotspots') => {
+    setFilterState(filter);
+    const map = mapRef.current;
+    if (!map || !map.getLayer('heat-cells-fill')) return;
+
+    if (filter === 'all') {
+      map.setFilter('heat-cells-fill', null);
+    } else if (filter === 'emerging') {
+      map.setFilter('heat-cells-fill', ['==', ['get', 'trajectory_state'], 'EMERGING']);
+    } else if (filter === 'hotspots') {
+      map.setFilter('heat-cells-fill', ['==', ['get', 'trajectory_state'], 'PERSISTENT']);
+    }
   };
 
   const handleFetchTender = async () => {
@@ -136,20 +443,35 @@ export default function MultiViewScreen() {
     }
   };
 
+  const handleSearch = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    const q = searchQuery.toLowerCase().trim();
+    if (!q) return;
+
+    const matchedKey = Object.keys(CHENNAI_PRESETS).find((k) => q.includes(k) || k.includes(q));
+    if (matchedKey) {
+      const preset = CHENNAI_PRESETS[matchedKey];
+      setSelectedWardKey(preset.key);
+      if (mapRef.current) {
+        mapRef.current.flyTo({
+          center: preset.center,
+          zoom: 14.5,
+          duration: 1100,
+        });
+      }
+    }
+  };
+
   return (
     <div className="bg-surface text-on-surface font-body-md text-body-md antialiased min-h-screen selection:bg-primary-container selection:text-on-primary-container">
       {/* Top Main Navigation Header */}
-      <header className="fixed top-0 inset-x-0 z-50 h-header-height bg-surface-container-lowest/95 backdrop-blur-xl border-b border-surface-container-highest/40 shadow-[0_1px_8px_rgba(0,0,0,0.6)]">
+      <header className="fixed top-0 inset-x-0 z-50 h-header-height bg-surface-container-lowest/95 backdrop-blur-xl border-b border-surface-container-highest/40 shadow-sm">
         <div className="w-full h-header-height px-gutter-desktop flex items-center justify-between gap-space-lg">
           <div className="flex items-center gap-space-lg min-w-0">
             <Link href="/" className="flex items-center gap-space-md shrink-0">
-              <img
-                alt="Brand logo"
-                className="h-8 w-auto object-contain"
-                src="https://lh3.googleusercontent.com/aida/AEtjO1V_U6qg3PIcJPAwsgB2PIqlGXh7-7AaKQoFO211JBy5xI4_7fm7qpAsuMRizqvQBX3HmPf7x3cB0NfMxbNaM7RvErdjbuAKy61R4fdDNFXy12ulmfJNG5PMdTCRRt0V83mb_6l3ZZvtC6uHfQlOquH6LJUnaRsUcTdcQxK8JHvVrxIHGkabbk0xQWcxXoA32CfuMMmnb1CMPANZnfw2YAQFmx2BOEHhjA3omyCkMTvzbLI-_EFQE2aZpRNI"
-              />
+              <HeatScapeLogo size={32} animate={true} />
               <span className="font-headline-sm text-headline-sm text-on-surface font-bold tracking-tight hidden sm:inline-block">
-                HeatScape
+                Heat<span className="text-[#D97757]">Scape</span>
               </span>
             </Link>
             <div className="h-4 w-px bg-surface-container-highest/60 hidden md:block" />
@@ -229,7 +551,7 @@ export default function MultiViewScreen() {
             </button>
             <button
               onClick={handleFetchTender}
-              className="flex items-center gap-1.5 px-space-md py-1 rounded-lg bg-primary-container hover:bg-primary text-on-primary-container font-label-sm text-label-sm font-semibold transition-all shadow-[0_2px_10px_rgba(243,128,32,0.3)]"
+              className="flex items-center gap-1.5 px-space-md py-1 rounded-lg bg-primary-container hover:bg-primary text-on-primary-container font-label-sm text-label-sm font-semibold transition-all shadow-sm"
             >
               <span className="material-symbols-outlined text-[16px]">receipt_long</span>
               <span className="hidden sm:inline">Tender BOQ</span>
@@ -250,7 +572,7 @@ export default function MultiViewScreen() {
             <span className="material-symbols-outlined text-[14px]">chevron_right</span>
             <span>Microclimate Ops</span>
             <span className="material-symbols-outlined text-[14px]">chevron_right</span>
-            <span className="text-on-surface font-medium">Multi-View Thermal & Street Grid</span>
+            <span className="text-on-surface font-medium">Multi-View Thermal, NDVI & Infrastructure Matrix</span>
           </div>
           <div className="flex items-center gap-space-sm">
             <button className="flex items-center gap-space-xs px-space-md py-1.5 rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface font-label-sm text-label-sm border border-surface-container-highest/60 transition-all">
@@ -273,7 +595,7 @@ export default function MultiViewScreen() {
             </button>
             <Link
               href={`/simulator?ward=${selectedWardKey}`}
-              className="flex items-center gap-space-xs px-space-md py-1.5 rounded-lg bg-primary-container hover:bg-primary text-on-primary-container font-label-sm text-label-sm font-semibold transition-all shadow-[0_2px_10px_rgba(243,128,32,0.3)]"
+              className="flex items-center gap-space-xs px-space-md py-1.5 rounded-lg bg-primary-container hover:bg-primary text-on-primary-container font-label-sm text-label-sm font-semibold transition-all shadow-sm"
             >
               <span className="material-symbols-outlined text-[16px]">play_arrow</span>
               <span>Run Simulation</span>
@@ -284,255 +606,16 @@ export default function MultiViewScreen() {
 
       {/* Main Full-Height Spatial Canvas */}
       <main className="relative w-full h-[calc(100vh-theme(spacing.header-height)-3.25rem)] overflow-hidden bg-surface-container-lowest select-none">
-        {/* Base Vector & Tile Map Canvas (Carto Dark Matter Satellite Backdrop) */}
-        <div
-          className={`absolute inset-0 w-full h-full bg-cover bg-center transition-all duration-700 ${
-            activeMode === 'satellite'
-              ? 'filter saturate-100 contrast-110 opacity-85'
-              : 'filter saturate-50 contrast-125 opacity-70'
-          } ${is3DTilt ? 'scale-105 rotate-1' : ''}`}
-          style={{
-            backgroundImage: `url('https://lh3.googleusercontent.com/aida-public/AB6AXuDXw-J-P_3I-vbGOepa-o1KqnW8scU__SyNA5FHE4AZZ3raI0GEpeN5_jlBSZXNKR5NMgc6pwnBUlhC2SeHlGHuvIxH2iOgCrbOijT-r_e5-7WUY8nJHErAnSzqKfqL-uADKtUDQQEup0c-72-7PXxXMQKkQaXhsaKq2FN0GHlEMOr8zU6QlZMZPTdp4QL_YUI7hv3cv_QHUXKQK8nsAwFj5u5danKYUSe-1c8Fo66UvWQ_lrbnxv1smg')`,
-            transform: `scale(${zoomLevel})`,
-          }}
-        />
-
-        {/* Atmospheric Gradients */}
-        <div className="absolute inset-0 pointer-events-none bg-gradient-to-tr from-surface via-transparent to-surface-container-lowest/80" />
-        <div className="absolute inset-0 pointer-events-none opacity-25 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary-container/20 via-surface-container-lowest/0 to-transparent" />
-
-        {/* Scaled Spatial Vector Map Layer (SVG Polygons & Corridors) */}
-        <svg
-          className="absolute inset-0 w-full h-full pointer-events-auto"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <defs>
-            <radialGradient cx="50%" cy="50%" id="heatExtremeRed" r="50%">
-              <stop offset="0%" stopColor="#ff3b30" stopOpacity="0.75" />
-              <stop offset="40%" stopColor="#f38020" stopOpacity="0.5" />
-              <stop offset="75%" stopColor="#93000a" stopOpacity="0.25" />
-              <stop offset="100%" stopColor="#93000a" stopOpacity="0" />
-            </radialGradient>
-            <radialGradient cx="50%" cy="50%" id="heatModerateAmber" r="50%">
-              <stop offset="0%" stopColor="#f38020" stopOpacity="0.7" />
-              <stop offset="50%" stopColor="#ffb787" stopOpacity="0.4" />
-              <stop offset="100%" stopColor="#f38020" stopOpacity="0" />
-            </radialGradient>
-            <radialGradient cx="50%" cy="50%" id="coolVibrantBlue" r="50%">
-              <stop offset="0%" stopColor="#00d4ff" stopOpacity="0.7" />
-              <stop offset="45%" stopColor="#00a6e0" stopOpacity="0.45" />
-              <stop offset="80%" stopColor="#005236" stopOpacity="0.2" />
-              <stop offset="100%" stopColor="#051424" stopOpacity="0" />
-            </radialGradient>
-            <radialGradient cx="50%" cy="50%" id="coolGreenPark" r="50%">
-              <stop offset="0%" stopColor="#4edea3" stopOpacity="0.6" />
-              <stop offset="60%" stopColor="#00b57d" stopOpacity="0.25" />
-              <stop offset="100%" stopColor="#003824" stopOpacity="0" />
-            </radialGradient>
-            <radialGradient cx="50%" cy="50%" id="gaussianKdeGlow" r="50%">
-              <stop offset="0%" stopColor="#991b1b" stopOpacity="0.85" />
-              <stop offset="25%" stopColor="#ef4444" stopOpacity="0.7" />
-              <stop offset="50%" stopColor="#f97316" stopOpacity="0.5" />
-              <stop offset="75%" stopColor="#eab308" stopOpacity="0.3" />
-              <stop offset="90%" stopColor="#10b981" stopOpacity="0.15" />
-              <stop offset="100%" stopColor="#000000" stopOpacity="0" />
-            </radialGradient>
-            <pattern height="120" id="streetGrid" patternUnits="userSpaceOnUse" width="120">
-              <path
-                d="M 120 0 L 0 0 0 120"
-                fill="none"
-                stroke="#273647"
-                strokeDasharray="2 4"
-                strokeOpacity="0.35"
-                strokeWidth="0.7"
-              />
-            </pattern>
-          </defs>
-
-          {/* Background Grid Pattern */}
-          <rect fill="url(#streetGrid)" height="100%" pointerEvents="none" width="100%" />
-
-          {/* Major Arterial Vector Corridors (Anna Salai, Mount Road, Usman Road) */}
-          <g
-            fill="none"
-            pointerEvents="none"
-            stroke={activeMode === 'street' ? '#f38020' : '#7bd0ff'}
-            strokeLinecap="round"
-            strokeOpacity={activeMode === 'street' ? 0.7 : 0.3}
-          >
-            <path
-              d="M 180,680 L 360,430 L 490,305 L 670,160"
-              strokeDasharray="6 3"
-              strokeWidth={activeMode === 'street' ? 5 : 3.5}
-            />
-            <path
-              d="M 230,220 L 320,260 L 480,310 L 610,390"
-              strokeWidth={activeMode === 'street' ? 4 : 2.5}
-            />
-            <path d="M 340,170 L 320,380 L 290,560" strokeWidth="2" />
-            <path d="M 460,210 L 495,305 L 540,480" strokeWidth="2" />
-          </g>
-
-          {/* Ward 117 (T. Nagar North) Mesh */}
-          <polygon
-            fill={activeMode === 'thermal' ? 'url(#heatExtremeRed)' : '#ffb4ab'}
-            fillOpacity={activeMode === 'thermal' ? 0.8 : 0.15}
-            points="220,160 360,140 400,240 280,270"
-            stroke="#ffb4ab"
-            strokeDasharray="4 3"
-            strokeOpacity="0.7"
-            strokeWidth="1.5"
-            className="cursor-pointer hover:opacity-90 transition-all"
-            onClick={() => handleSelectWard('117')}
-          />
-
-          {/* Ward 119 (CIT Nagar / South) */}
-          <polygon
-            fill="#7bd0ff"
-            fillOpacity={activeMode === 'thermal' ? 0.2 : 0.1}
-            points="280,270 410,240 450,380 310,410"
-            stroke="#7bd0ff"
-            strokeDasharray="4 3"
-            strokeOpacity="0.6"
-            strokeWidth="1.5"
-            className="cursor-pointer hover:opacity-90 transition-all"
-            onClick={() => handleSelectWard('119')}
-          />
-
-          {/* Ward 114 (Teynampet Active Boundary) */}
-          <polygon
-            fill={selectedWardKey === '114' ? 'url(#heatModerateAmber)' : '#f38020'}
-            fillOpacity={selectedWardKey === '114' ? 0.6 : 0.15}
-            points="410,240 560,200 630,310 540,420 440,360"
-            stroke="#f38020"
-            strokeDasharray="5 2"
-            strokeWidth={selectedWardKey === '114' ? 2.5 : 1.5}
-            className="cursor-pointer hover:opacity-90 transition-all"
-            onClick={() => handleSelectWard('114')}
-          />
-
-          {/* Cool Anomaly: Guindy National Reserve Verge */}
-          <polygon
-            className="transition-all duration-300 hover:opacity-90 cursor-pointer"
-            fill="url(#coolVibrantBlue)"
-            points="110,430 220,400 270,510 180,560 90,500"
-          />
-          <circle cx="175" cy="475" fill="url(#coolGreenPark)" r="42" />
-          <circle
-            cx="175"
-            cy="475"
-            fill="none"
-            r="58"
-            stroke="#00d4ff"
-            strokeDasharray="4 4"
-            strokeOpacity="0.4"
-            strokeWidth="1.5"
-          />
-
-          {/* Continuous Gaussian Thermal Heatmap Layer (active when continuous_kde) */}
-          {activeMode === 'continuous_kde' && (
-            <g className="transition-opacity duration-500 animate-pulse pointer-events-none">
-              <circle cx="325" cy="245" r="160" fill="url(#gaussianKdeGlow)" />
-              <circle cx="495" cy="305" r="140" fill="url(#gaussianKdeGlow)" />
-              <circle cx="260" cy="350" r="110" fill="url(#gaussianKdeGlow)" />
-              <circle cx="410" cy="180" r="100" fill="url(#gaussianKdeGlow)" />
-              <circle cx="175" cy="475" r="140" fill="url(#coolVibrantBlue)" />
-            </g>
-          )}
-
-          {/* T. Nagar Hotspot Circle Visuals */}
-          <circle className="animate-pulse" cx="325" cy="245" fill="#ff3b30" fillOpacity="0.25" r="54" />
-          <circle cx="325" cy="245" fill="#ff3b30" fillOpacity="0.65" r="28" />
-          <circle
-            cx="325"
-            cy="245"
-            fill="none"
-            r="70"
-            stroke="#ff3b30"
-            strokeDasharray="3 3"
-            strokeOpacity="0.5"
-            strokeWidth="1.5"
-          />
-
-          {/* Interactive Target Ward Pin Animation */}
-          <g
-            className="cursor-pointer group"
-            onClick={() => handleSelectWard(selectedWardKey)}
-          >
-            <circle
-              className="animate-pulse"
-              cx={currentWard.cx}
-              cy={currentWard.cy}
-              fill="none"
-              r="68"
-              stroke="#f38020"
-              strokeDasharray="6 4"
-              strokeWidth="2"
-            />
-            <circle
-              className="animate-ping"
-              cx={currentWard.cx}
-              cy={currentWard.cy}
-              fill="#f38020"
-              fillOpacity="0.25"
-              r="48"
-              style={{ animationDuration: '2.8s' }}
-            />
-            <circle cx={currentWard.cx} cy={currentWard.cy} fill="#f38020" fillOpacity="0.75" r="24" />
-            <circle cx={currentWard.cx} cy={currentWard.cy} fill="#ffffff" r="7" />
-          </g>
-        </svg>
-
-        {/* Floating Target Pin Badge */}
-        <div
-          className="absolute z-20 flex flex-col items-center -translate-x-1/2 -translate-y-full pointer-events-none transition-all duration-500"
-          style={{ top: `${currentWard.cy - 16}px`, left: `${currentWard.cx}px` }}
-        >
-          <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-lowest/95 text-on-surface text-label-sm font-label-sm shadow-xl backdrop-blur-md whitespace-nowrap border border-surface-container-highest/60">
-            <span className="w-2 h-2 rounded-full bg-primary-container" />
-            <span className="font-semibold text-primary">{currentWard.secCode.split('•')[1] || currentWard.secCode}</span>
-            <span className="text-on-surface-variant font-normal">• {currentWard.name.split('•')[0]}</span>
-            <span className="font-code-sm text-code-sm text-primary-container font-medium">
-              {currentWard.anomaly}
-            </span>
-          </div>
-          <div className="w-3 h-3 bg-surface-container-lowest rotate-45 -mt-1.5 shadow-sm border-r border-b border-surface-container-highest/60" />
-          <div className="w-3 h-3 rounded-full bg-primary-container ring-4 ring-primary-container/30 mt-1 shadow-lg" />
-        </div>
-
-        {/* Ambient Map Labels */}
-        <div className="absolute top-[185px] left-[265px] pointer-events-none flex flex-col items-center gap-1">
-          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-surface-container-lowest/95 border border-error/40 text-error font-code-sm text-code-sm shadow-xl backdrop-blur-md">
-            <span className="w-2 h-2 rounded-full bg-error animate-ping" />
-            <span className="font-bold text-on-surface">T. Nagar Core</span>
-            <span className="font-bold text-error">+4.2°C</span>
-          </div>
-          <span className="px-1.5 py-0.5 rounded bg-surface-container-lowest/80 text-[11px] font-label-sm text-outline tracking-wide">
-            Usman Rd • Pondy Bazaar
-          </span>
-        </div>
-
-        <div className="absolute top-[345px] left-[320px] pointer-events-none">
-          <span className="px-2 py-0.5 rounded-full bg-surface-container-lowest/90 border border-secondary/30 text-secondary font-label-sm text-label-sm backdrop-blur-sm shadow-md">
-            Ward 119 • CIT Nagar (+1.8°C)
-          </span>
-        </div>
-
-        <div className="absolute top-[410px] left-[430px] pointer-events-none flex items-center gap-1.5 px-2 py-0.5 rounded bg-surface-container-lowest/85 border border-surface-container-highest/60 text-on-surface-variant font-label-sm text-label-sm shadow-sm">
-          <span className="material-symbols-outlined text-[14px] text-secondary">navigation</span>
-          <span className="font-medium text-secondary">Anna Salai (Mount Rd Corridor)</span>
-        </div>
-
-        <div className="absolute top-[490px] left-[150px] pointer-events-none">
-          <span className="px-2 py-0.5 rounded bg-surface-container-lowest/80 text-tertiary font-code-sm text-code-sm backdrop-blur-sm">
-            Guindy Reserve (-1.4°C)
-          </span>
-        </div>
+        {/* Interactive MapLibre GL Canvas */}
+        <div ref={mapContainerRef} className="absolute inset-0 w-full h-full" />
 
         {/* Floating Top Controls Bar: Search & Mode Segmented Switcher */}
         <div className="absolute top-4 inset-x-6 z-30 flex items-center justify-between gap-4 pointer-events-none">
           {/* Left: Search input */}
-          <div className="flex items-center gap-2 pointer-events-auto p-1.5 rounded-2xl bg-surface-container-lowest/95 backdrop-blur-xl border border-surface-container-highest/60 shadow-2xl w-80">
+          <form
+            onSubmit={handleSearch}
+            className="flex items-center gap-2 pointer-events-auto p-1.5 rounded-2xl bg-surface-container-lowest/95 backdrop-blur-xl border border-surface-container-highest/60 shadow-xl w-80"
+          >
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-surface-container-low text-on-surface-variant flex-1 focus-within:text-on-surface border border-surface-container-highest/40">
               <span className="material-symbols-outlined text-[18px] text-primary-container">search</span>
               <input
@@ -540,27 +623,21 @@ export default function MultiViewScreen() {
                 placeholder="Find ward, node or corridor..."
                 type="text"
                 value={searchQuery}
-                onChange={(e) => {
-                  setSearchQuery(e.target.value);
-                  const q = e.target.value.toLowerCase();
-                  if (q.includes('nagar') || q.includes('117')) setSelectedWardKey('117');
-                  else if (q.includes('cit') || q.includes('119')) setSelectedWardKey('119');
-                  else if (q.includes('teynampet') || q.includes('114')) setSelectedWardKey('114');
-                }}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
               <span className="text-outline/60 text-code-sm font-code-sm bg-surface-container-high px-1 py-0.5 rounded border border-surface-container-highest/80">
                 CHE
               </span>
             </div>
-          </div>
+          </form>
 
           {/* Center: Multi-View Spatial Mode Segmented Switcher */}
-          <div className="pointer-events-auto flex items-center p-1 rounded-2xl bg-surface-container-lowest/95 backdrop-blur-2xl border border-surface-container-highest/80 shadow-2xl">
+          <div className="pointer-events-auto flex items-center p-1 rounded-2xl bg-surface-container-lowest/95 backdrop-blur-2xl border border-surface-container-highest/80 shadow-xl">
             <button
-              onClick={() => setActiveMode('thermal')}
+              onClick={() => handleModeChange('thermal')}
               className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl font-label-md text-label-md font-semibold transition-all ${
                 activeMode === 'thermal'
-                  ? 'bg-primary-container text-on-primary-container shadow-[0_2px_10px_rgba(243,128,32,0.3)]'
+                  ? 'bg-primary-container text-on-primary-container shadow-sm'
                   : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container'
               }`}
             >
@@ -571,7 +648,7 @@ export default function MultiViewScreen() {
               </span>
             </button>
             <button
-              onClick={() => setActiveMode('satellite')}
+              onClick={() => handleModeChange('satellite')}
               className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl font-label-md text-label-md font-medium transition-all ${
                 activeMode === 'satellite'
                   ? 'bg-surface-container-high text-on-surface shadow-sm font-semibold'
@@ -582,7 +659,7 @@ export default function MultiViewScreen() {
               <span>Satellite & NDVI</span>
             </button>
             <button
-              onClick={() => setActiveMode('street')}
+              onClick={() => handleModeChange('street')}
               className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl font-label-md text-label-md font-medium transition-all ${
                 activeMode === 'street'
                   ? 'bg-surface-container-high text-on-surface shadow-sm font-semibold'
@@ -590,10 +667,10 @@ export default function MultiViewScreen() {
               }`}
             >
               <span className="material-symbols-outlined text-[16px] text-secondary">alt_route</span>
-              <span>Street & Infrastructure</span>
+              <span>Street & Impervious</span>
             </button>
             <button
-              onClick={() => setActiveMode('vulnerability')}
+              onClick={() => handleModeChange('vulnerability')}
               className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl font-label-md text-label-md font-medium transition-all ${
                 activeMode === 'vulnerability'
                   ? 'bg-surface-container-high text-on-surface shadow-sm font-semibold'
@@ -603,23 +680,12 @@ export default function MultiViewScreen() {
               <span className="material-symbols-outlined text-[16px] text-primary">groups</span>
               <span>Vulnerability Matrix</span>
             </button>
-            <button
-              onClick={() => setActiveMode('continuous_kde')}
-              className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl font-label-md text-label-md font-medium transition-all ${
-                activeMode === 'continuous_kde'
-                  ? 'bg-primary text-on-primary shadow-[0_0_15px_rgba(243,128,32,0.4)] font-semibold'
-                  : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container'
-              }`}
-            >
-              <span className="material-symbols-outlined text-[16px]">blur_on</span>
-              <span>Thermal Glow (KDE)</span>
-            </button>
           </div>
 
           {/* Right Quick Filter Pills */}
           <div className="pointer-events-auto hidden xl:flex items-center gap-1.5 p-1.5 rounded-2xl bg-surface-container-lowest/90 backdrop-blur-xl border border-surface-container-highest/60 shadow-xl">
             <button
-              onClick={() => setFilterState('all')}
+              onClick={() => handleFilter('all')}
               className={`px-3 py-1 rounded-xl font-label-sm text-label-sm font-medium transition-all ${
                 filterState === 'all'
                   ? 'bg-surface-container-high text-on-surface shadow-sm'
@@ -630,7 +696,7 @@ export default function MultiViewScreen() {
             </button>
             <button
               onClick={() => {
-                setFilterState('emerging');
+                handleFilter('emerging');
                 handleSelectWard('114');
               }}
               className={`flex items-center gap-1.5 px-2.5 py-1 rounded-xl font-label-sm text-label-sm transition-colors ${
@@ -639,12 +705,12 @@ export default function MultiViewScreen() {
                   : 'bg-surface-container-low hover:bg-surface-container text-on-surface-variant'
               }`}
             >
-              <span className="w-2 h-2 rounded-full bg-primary-container animate-pulse" />
+              <span className="w-2 h-2 rounded-full bg-primary-container" />
               <span>38 Emerging</span>
             </button>
             <button
               onClick={() => {
-                setFilterState('hotspots');
+                handleFilter('hotspots');
                 handleSelectWard('117');
               }}
               className={`flex items-center gap-1.5 px-2.5 py-1 rounded-xl font-label-sm text-label-sm transition-colors ${
@@ -659,82 +725,141 @@ export default function MultiViewScreen() {
           </div>
         </div>
 
-        {/* Floating Bottom-Left Map Legend */}
-        <div className="absolute bottom-6 left-6 z-20 flex flex-col gap-2.5 p-3.5 rounded-2xl bg-surface-container-lowest/95 backdrop-blur-2xl border border-surface-container-highest/80 shadow-2xl w-80">
+        {/* Dynamic Bottom-Left Map Legend */}
+        <div className="absolute bottom-6 left-6 z-20 flex flex-col gap-2.5 p-3.5 rounded-2xl bg-surface-container-lowest/95 backdrop-blur-2xl border border-surface-container-highest/80 shadow-xl w-80">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1.5">
               <span className="material-symbols-outlined text-[16px] text-primary-container">
-                device_thermostat
+                {activeMode === 'satellite'
+                  ? 'park'
+                  : activeMode === 'street'
+                  ? 'domain'
+                  : activeMode === 'vulnerability'
+                  ? 'groups'
+                  : 'device_thermostat'}
               </span>
               <span className="font-label-sm text-label-sm font-semibold text-on-surface tracking-wide">
                 {activeMode === 'satellite'
-                  ? 'NDVI Vegetative Scale'
+                  ? 'NDVI Tree Canopy Scale'
+                  : activeMode === 'street'
+                  ? 'Built Impervious Ratio'
                   : activeMode === 'vulnerability'
-                  ? 'SEVI Social Vulnerability'
-                  : 'Thermal Anomaly Divergent Scale'}
+                  ? 'Social Vulnerability Exposure'
+                  : 'Thermal Anomaly Scale'}
               </span>
             </div>
             <span className="font-code-sm text-code-sm text-outline px-1.5 py-0.5 rounded bg-surface-container-low border border-surface-container-highest/40">
-              {activeMode === 'satellite' ? 'Sentinel-2' : 'MODIS 100m'}
+              100m Grids
             </span>
           </div>
 
           {/* Divergent Gradient Bar */}
           <div className="relative w-full">
             <div
-              className="w-full h-3 rounded-full shadow-inner border border-surface-container-highest/60"
-              style={{
-                background:
-                  activeMode === 'satellite'
-                    ? 'linear-gradient(90deg, #93000a 0%, #f38020 30%, #ffb787 60%, #4edea3 85%, #00b57d 100%)'
-                    : 'linear-gradient(90deg, #00d4ff 0%, #00a6e0 22%, #273647 48%, #f38020 74%, #ff3b30 100%)',
-              }}
+              className={`w-full h-2.5 rounded-full shadow-inner border border-surface-container-highest/60 ${
+                activeMode === 'thermal'
+                  ? 'bg-gradient-to-r from-sky-400 via-amber-400 to-red-600'
+                  : activeMode === 'satellite'
+                  ? 'bg-gradient-to-r from-stone-800 via-lime-500 to-emerald-950'
+                  : activeMode === 'street'
+                  ? 'bg-gradient-to-r from-sky-500 via-amber-400 to-red-500'
+                  : 'bg-gradient-to-r from-cyan-400 via-purple-500 to-rose-600'
+              }`}
             />
-            <div className="flex justify-between items-center text-[10px] font-code-sm text-outline px-0.5 pt-1">
-              <span>|</span>
-              <span>|</span>
-              <span>▲ 0°C</span>
-              <span>|</span>
-              <span>|</span>
-            </div>
           </div>
 
           <div className="flex items-center justify-between font-code-sm text-code-sm pt-0.5">
-            <div className="flex flex-col">
-              <span className="text-secondary font-bold">-2.5°C</span>
-              <span className="text-[11px] font-label-sm text-on-surface-variant">Cool Canopy</span>
-            </div>
-            <div className="flex flex-col text-center">
-              <span className="text-on-surface font-semibold">±0.0°C</span>
-              <span className="text-[11px] font-label-sm text-outline">Baseline</span>
-            </div>
-            <div className="flex flex-col text-right">
-              <span className="text-error font-bold">+4.5°C</span>
-              <span className="text-[11px] font-label-sm text-error">Extreme Heat</span>
-            </div>
+            {activeMode === 'thermal' && (
+              <>
+                <div className="flex flex-col">
+                  <span className="text-sky-400 font-bold">&lt;1.0°C</span>
+                  <span className="text-[11px] font-label-sm text-on-surface-variant">Cool Buffer</span>
+                </div>
+                <div className="flex flex-col text-center">
+                  <span className="text-amber-400 font-semibold">+2.5°C</span>
+                  <span className="text-[11px] font-label-sm text-outline">Normal</span>
+                </div>
+                <div className="flex flex-col text-right">
+                  <span className="text-red-500 font-bold">&gt;+5.0°C</span>
+                  <span className="text-[11px] font-label-sm text-error">Extreme</span>
+                </div>
+              </>
+            )}
+            {activeMode === 'satellite' && (
+              <>
+                <div className="flex flex-col">
+                  <span className="text-stone-400 font-bold">0%</span>
+                  <span className="text-[11px] font-label-sm text-on-surface-variant">Barren Soil</span>
+                </div>
+                <div className="flex flex-col text-center">
+                  <span className="text-lime-400 font-semibold">15%</span>
+                  <span className="text-[11px] font-label-sm text-outline">Moderate</span>
+                </div>
+                <div className="flex flex-col text-right">
+                  <span className="text-emerald-400 font-bold">&gt;35%</span>
+                  <span className="text-[11px] font-label-sm text-emerald-400">Lush Canopy</span>
+                </div>
+              </>
+            )}
+            {activeMode === 'street' && (
+              <>
+                <div className="flex flex-col">
+                  <span className="text-sky-400 font-bold">&lt;30%</span>
+                  <span className="text-[11px] font-label-sm text-on-surface-variant">Permeable</span>
+                </div>
+                <div className="flex flex-col text-center">
+                  <span className="text-amber-400 font-semibold">70%</span>
+                  <span className="text-[11px] font-label-sm text-outline">Built Road</span>
+                </div>
+                <div className="flex flex-col text-right">
+                  <span className="text-red-400 font-bold">&gt;95%</span>
+                  <span className="text-[11px] font-label-sm text-error">Sealed Hardscape</span>
+                </div>
+              </>
+            )}
+            {activeMode === 'vulnerability' && (
+              <>
+                <div className="flex flex-col">
+                  <span className="text-cyan-400 font-bold">&lt;5k</span>
+                  <span className="text-[11px] font-label-sm text-on-surface-variant">Low Exposure</span>
+                </div>
+                <div className="flex flex-col text-center">
+                  <span className="text-purple-400 font-semibold">18k</span>
+                  <span className="text-[11px] font-label-sm text-outline">Moderate</span>
+                </div>
+                <div className="flex flex-col text-right">
+                  <span className="text-rose-400 font-bold">&gt;40k</span>
+                  <span className="text-[11px] font-label-sm text-rose-400">Dense Risk</span>
+                </div>
+              </>
+            )}
           </div>
 
           {/* Sensor Live Callout */}
           <div className="pt-2 border-t border-surface-container-highest/50 flex items-center justify-between text-label-sm font-label-sm text-on-surface-variant">
             <span className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-tertiary animate-pulse" />
-              842 Grid Telemetry Nodes Active
+              <span className="w-2 h-2 rounded-full bg-tertiary" />
+              842 IoT Nodes Active
             </span>
-            <span className="font-code-sm text-code-sm text-tertiary">±0.2°C acc</span>
+            <span className="font-code-sm text-code-sm text-tertiary">±0.2°C accuracy</span>
           </div>
         </div>
 
         {/* Floating Right Map Navigation Controls */}
-        <div className="absolute bottom-6 right-[450px] z-20 flex flex-col gap-1 p-1 rounded-xl bg-surface-container-lowest/90 backdrop-blur-xl border border-surface-container-highest/60 shadow-xl">
+        <div
+          className={`absolute bottom-6 z-20 flex flex-col gap-1 p-1 rounded-xl bg-surface-container-lowest/90 backdrop-blur-xl border border-surface-container-highest/60 shadow-xl transition-all duration-300 ${
+            drawerOpen ? 'right-[450px]' : 'right-6'
+          }`}
+        >
           <button
-            onClick={() => setZoomLevel((z) => Math.min(1.8, z + 0.15))}
+            onClick={() => mapRef.current?.zoomIn()}
             className="p-2 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors"
             title="Zoom In"
           >
             <span className="material-symbols-outlined text-[20px]">add</span>
           </button>
           <button
-            onClick={() => setZoomLevel((z) => Math.max(0.7, z - 0.15))}
+            onClick={() => mapRef.current?.zoomOut()}
             className="p-2 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors"
             title="Zoom Out"
           >
@@ -742,29 +867,43 @@ export default function MultiViewScreen() {
           </button>
           <div className="w-full h-px bg-surface-container-highest/40 my-0.5" />
           <button
-            onClick={() => setIs3DTilt(!is3DTilt)}
+            onClick={() => {
+              const newTilt = !is3DTilt;
+              setIs3DTilt(newTilt);
+              mapRef.current?.easeTo({
+                pitch: newTilt ? 55 : 0,
+                bearing: newTilt ? -20 : 0,
+                duration: 900,
+              });
+            }}
             className={`p-2 rounded-lg transition-colors ${
               is3DTilt
                 ? 'bg-primary-container text-on-primary-container'
                 : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container'
             }`}
-            title="3D Isometric Tilt"
+            title="Toggle 3D Pitch"
           >
             <span className="material-symbols-outlined text-[20px]">view_in_ar</span>
           </button>
           <button
             onClick={() => {
-              setZoomLevel(1);
               setIs3DTilt(false);
+              mapRef.current?.flyTo({
+                center: [80.24, 13.04],
+                zoom: 12.6,
+                pitch: 0,
+                bearing: 0,
+                duration: 900,
+              });
             }}
             className="p-2 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors"
-            title="Reset North Center"
+            title="Reset Center"
           >
             <span className="material-symbols-outlined text-[20px]">explore</span>
           </button>
         </div>
 
-        {/* Floating Right Detail Drawer (Google Stitch Screen 03) */}
+        {/* Floating Right Detail Drawer */}
         {drawerOpen ? (
           <aside className="absolute top-4 right-6 bottom-6 w-[420px] z-30 flex flex-col rounded-2xl bg-surface-container-lowest/95 backdrop-blur-2xl border border-surface-container-highest/80 shadow-2xl overflow-hidden transition-all duration-300">
             {/* Drawer Header */}
@@ -779,7 +918,7 @@ export default function MultiViewScreen() {
                     }`}
                   >
                     <span
-                      className={`w-1.5 h-1.5 rounded-full animate-pulse ${
+                      className={`w-1.5 h-1.5 rounded-full ${
                         currentWard.status === 'PERSISTENT' ? 'bg-error' : 'bg-primary-container'
                       }`}
                     />
@@ -834,7 +973,7 @@ export default function MultiViewScreen() {
                 </p>
               </div>
 
-              {/* Segmented Tabs: Overview, Why It Matters, Street Interventions, Historical */}
+              {/* Segmented Tabs */}
               <div className="flex p-1 rounded-xl bg-surface-container-low border border-surface-container-highest/60 text-label-sm font-label-sm">
                 {(['overview', 'whymatters', 'interventions', 'historical'] as WardTab[]).map((tab) => (
                   <button
@@ -871,16 +1010,15 @@ export default function MultiViewScreen() {
                         94% Confidence
                       </span>
                     </div>
-                    {/* SVG Sparkline Fan */}
                     <div className="relative w-full h-24 pt-2">
                       <svg className="w-full h-full overflow-visible" fill="none" viewBox="0 0 320 80">
                         <line stroke="#273647" strokeDasharray="3 3" strokeWidth="1" x1="0" x2="320" y1="20" y2="20" />
                         <line stroke="#273647" strokeDasharray="3 3" strokeWidth="1" x1="0" x2="320" y1="50" y2="50" />
-                        <polygon fill="#f38020" fillOpacity="0.16" points="180,45 310,12 310,38 180,45" />
+                        <polygon fill="#D97757" fillOpacity="0.16" points="180,45 310,12 310,38 180,45" />
                         <path d="M10,65 Q50,60 90,52 T180,45" fill="none" stroke="#00d4ff" strokeLinecap="round" strokeWidth="2.5" />
-                        <path d="M180,45 Q240,32 310,24" fill="none" stroke="#f38020" strokeDasharray="4 3" strokeLinecap="round" strokeWidth="2.5" />
-                        <circle cx="180" cy="45" fill="#f38020" r="4.5" />
-                        <circle cx="310" cy="24" fill="#ff3b30" r="4" />
+                        <path d="M180,45 Q240,32 310,24" fill="none" stroke="#D97757" strokeDasharray="4 3" strokeLinecap="round" strokeWidth="2.5" />
+                        <circle cx="180" cy="45" fill="#D97757" r="4.5" />
+                        <circle cx="310" cy="24" fill="#ef4444" r="4" />
                       </svg>
                     </div>
                     <div className="flex items-center justify-between font-code-sm text-code-sm text-outline pt-1">
@@ -897,7 +1035,7 @@ export default function MultiViewScreen() {
                         Ward Vulnerability Matrix
                       </span>
                       <span className="text-[11px] font-code-sm text-secondary">
-                        Zone IX High Exposure
+                        Zone High Exposure
                       </span>
                     </div>
                     <div className="grid grid-cols-2 gap-2.5">
@@ -1084,7 +1222,7 @@ export default function MultiViewScreen() {
                     </span>
                   </div>
                 </div>
-                <span className="w-2.5 h-2.5 rounded-full bg-tertiary animate-pulse" />
+                <span className="w-2.5 h-2.5 rounded-full bg-tertiary" />
               </div>
             </div>
 
@@ -1092,10 +1230,10 @@ export default function MultiViewScreen() {
             <div className="p-4 bg-surface-container-low border-t border-surface-container-highest/60 flex flex-col gap-2.5">
               <Link
                 href={`/simulator?ward=${selectedWardKey}`}
-                className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-primary-container hover:bg-primary text-on-primary-container font-label-md text-label-md font-bold tracking-wide transition-all shadow-[0_4px_16px_rgba(243,128,32,0.35)]"
+                className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-primary-container hover:bg-primary text-on-primary-container font-label-md text-label-md font-bold tracking-wide transition-all shadow-sm"
               >
-                <span className="material-symbols-outlined text-[18px]">bolt</span>
-                <span>⚡ Simulate Cooling Solutions for this Ward</span>
+                <span className="material-symbols-outlined text-[18px]">play_arrow</span>
+                <span>Simulate Cooling Solutions for this Ward</span>
               </Link>
               <div className="flex items-center justify-between px-1">
                 <button
@@ -1114,7 +1252,7 @@ export default function MultiViewScreen() {
         ) : (
           <button
             onClick={() => setDrawerOpen(true)}
-            className="absolute top-4 right-6 z-30 p-3 rounded-2xl bg-surface-container-lowest/95 backdrop-blur-2xl border border-surface-container-highest/80 text-on-surface hover:text-primary shadow-2xl transition-all"
+            className="absolute top-4 right-6 z-30 p-3 rounded-2xl bg-surface-container-lowest/95 backdrop-blur-2xl border border-surface-container-highest/80 text-on-surface hover:text-primary shadow-xl transition-all"
             title="Open Ward Insights"
           >
             <span className="material-symbols-outlined text-[20px]">dock_to_left</span>
@@ -1314,7 +1452,7 @@ export default function MultiViewScreen() {
                     a.download = `GCC_Council_Resolution_${tenderManifest?.tender_id || '2024'}.json`;
                     a.click();
                   }}
-                  className="px-4 py-2 rounded-xl bg-primary-container hover:bg-primary text-on-primary-container font-label-md font-bold transition-all flex items-center gap-1.5 shadow-[0_2px_10px_rgba(243,128,32,0.3)]"
+                  className="px-4 py-2 rounded-xl bg-primary-container hover:bg-primary text-on-primary-container font-label-md font-bold transition-all flex items-center gap-1.5 shadow-sm"
                 >
                   <span className="material-symbols-outlined text-[16px]">print</span>
                   Download Council Manifest

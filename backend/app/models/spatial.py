@@ -10,8 +10,8 @@ class SpatialCell(Base):
     id = Column(String(32), primary_key=True, index=True)
     centroid_lat = Column(Float, nullable=False)
     centroid_lon = Column(Float, nullable=False)
-    ward_id = Column(String(16), index=True)
-    zone_id = Column(String(16), index=True)
+    ward_id = Column(String(64), index=True)
+    zone_id = Column(String(64), index=True)
 
     # Geometry columns: 32644 (UTM 44N Metric) & 4326 (WGS84) with GIST indices
     geom = Column(Geometry(geometry_type="POLYGON", srid=32644, spatial_index=True), nullable=False)

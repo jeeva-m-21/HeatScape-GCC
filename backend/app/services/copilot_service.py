@@ -208,7 +208,7 @@ class CopilotService:
 
             summary_phrase = " and ".join(conditions) if conditions else "matching your criteria"
 
-            reply = f"""### 🛰️ Spatial Query Filter Executed
+            reply = f"""### Spatial Query Filter Executed
 Identified cells **{summary_phrase}**.
 
 - **Matching Analytical Cells**: Approximately **48 high-priority cells** across Chennai.
@@ -247,7 +247,7 @@ Identified cells **{summary_phrase}**.
 
             stage_info = cls.GRAP_KNOWLEDGE[stage_key]
 
-            reply = f"""### 🚨 GCC Heat Action Plan Advisory: {stage_info['title']}
+            reply = f"""### GCC Heat Action Plan Advisory: {stage_info['title']}
 
 Under Greater Chennai Corporation bylaws and IMD tropical heatwave protocols, the following emergency actions are triggered:
 
@@ -268,7 +268,7 @@ Under Greater Chennai Corporation bylaws and IMD tropical heatwave protocols, th
 
         # Intent 3: Street Canyon (Oke) Dynamics
         elif is_canyon_query:
-            reply = r"""### 🏙️ Urban Street Canyon Dynamics (Oke 1988 Model)
+            reply = r"""### Urban Street Canyon Dynamics (Oke 1988 Model)
 
 In dense commercial sectors such as **T. Nagar (Usman Road)** and **Parrys (Broadway)**:
 - **Aspect Ratio ($H/W \ge 0.65$)**: Building facade heights ($20-30\text{m}$) far exceed street curb widths ($10-14\text{m}$), establishing the **Skimming Flow Regime**.
@@ -285,7 +285,7 @@ In dense commercial sectors such as **T. Nagar (Usman Road)** and **Parrys (Broa
 
         # Intent 4: Sea Breeze Penetration
         elif is_sea_breeze_query:
-            reply = r"""### 🌊 Bay of Bengal Marine Ingress & Sea Breeze Dynamics
+            reply = r"""### Bay of Bengal Marine Ingress & Sea Breeze Dynamics
 
 The Bay of Bengal Sea Breeze (BBSB) serves as Chennai's natural thermal mitigation mechanism:
 - **Initiation & Peak**: The thermal gradient between inland land surfaces and the coastal ocean initiates the breeze front around **11:30 IST**, peaking between **14:00 and 16:30 IST**.
@@ -296,7 +296,7 @@ The Bay of Bengal Sea Breeze (BBSB) serves as Chennai's natural thermal mitigati
 
         # Intent 5: Cooling Interventions & ROI
         elif is_intervention_query:
-            reply = r"""### 🌳 GCC Cooling Intervention Cost-Effectiveness Matrix
+            reply = r"""### GCC Cooling Intervention Cost-Effectiveness Matrix
 
 Based on Pareto multi-objective optimization across 1,200 analytical cells in Chennai:
 
