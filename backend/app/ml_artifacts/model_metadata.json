@@ -3,7 +3,7 @@
     "model_type": "xgboost",
     "filename": "chennai_microclimate_xgboost.joblib",
     "file_size_kb": 60.9,
-    "last_trained_utc": "2026-09-07T21:27:24.508826+00:00",
+    "last_trained_utc": "2026-09-08T08:33:06.778531+00:00",
     "hyperparameters": {
       "n_estimators": 50,
       "max_depth": 3,
@@ -16,7 +16,7 @@
       "test_mae_celsius": 0.2995,
       "cv_r2_mean": 0.9585,
       "cv_r2_std": 0.0026,
-      "train_time_ms": 21.63
+      "train_time_ms": 27.35
     },
     "feature_importances": [
       {
@@ -66,7 +66,7 @@
     "model_type": "random_forest",
     "filename": "chennai_microclimate_random_forest.joblib",
     "file_size_kb": 100.7,
-    "last_trained_utc": "2026-09-07T21:27:24.227973+00:00",
+    "last_trained_utc": "2026-09-08T08:33:06.532302+00:00",
     "hyperparameters": {
       "n_estimators": 40,
       "max_depth": 4,
@@ -79,7 +79,7 @@
       "test_mae_celsius": 0.5227,
       "cv_r2_mean": 0.8777,
       "cv_r2_std": 0.01,
-      "train_time_ms": 135.69
+      "train_time_ms": 77.42
     },
     "feature_importances": [
       {
@@ -129,7 +129,7 @@
     "model_type": "ridge",
     "filename": "chennai_microclimate_ridge.joblib",
     "file_size_kb": 0.6,
-    "last_trained_utc": "2026-09-07T21:27:24.258406+00:00",
+    "last_trained_utc": "2026-09-08T08:33:06.557517+00:00",
     "hyperparameters": {
       "n_estimators": 150,
       "max_depth": 5,
@@ -142,7 +142,7 @@
       "test_mae_celsius": 0.2397,
       "cv_r2_mean": 0.9673,
       "cv_r2_std": 0.0063,
-      "train_time_ms": 2.58
+      "train_time_ms": 1.5
     },
     "feature_importances": [
       {
