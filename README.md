@@ -1,15 +1,65 @@
-# HeatScape: Greater Chennai Corporation Urban Heat Platform
+<div align="center">
 
-[![Greater Chennai Corporation](https://img.shields.io/badge/GCC-Urban%20Climate%20Resilience-orange?style=flat-square)](https://chennaicorporation.gov.in/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.109-009688?style=flat-square&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
-[![Next.js](https://img.shields.io/badge/Next.js-14.1%20(App%20Router)-black?style=flat-square&logo=next.js&logoColor=white)](https://nextjs.org/)
-[![PostGIS](https://img.shields.io/badge/PostGIS-3.4%20(PostgreSQL%2016)-336791?style=flat-square&logo=postgresql&logoColor=white)](https://postgis.net/)
-[![Google Cloud](https://img.shields.io/badge/Google%20Cloud-APIs%20Connected-4285F4?style=flat-square&logo=googlecloud&logoColor=white)](https://cloud.google.com/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](https://opensource.org/licenses/MIT)
+# HeatScape // Greater Chennai Corporation
 
-**HeatScape** is an urban climate intelligence and intervention planning platform engineered for the **Greater Chennai Corporation (GCC)**. 
+### Spatiotemporal Urban Heat Intelligence, Thermal Risk Observability & Capital Intervention Planner
 
-It takes thermal satellite imagery, live Google Cloud APIs, and real-time street sensor data, and turns them into clear, street-level cooling actions. Instead of overwhelming city administrators with raw GIS files, HeatScape detects which 100-meter blocks are dangerously hot, explains *why* they are hot (lack of trees, excessive asphalt, or trapped air), and mathematically calculates the most cost-effective cooling interventions to deploy within municipal budgets.
+![HeatScape Banner](docs/images/heatscape_hero_banner.svg)
+
+[![Greater Chennai Corporation](https://img.shields.io/badge/GCC-Urban%20Climate%20Resilience-orange?style=for-the-badge)](https://chennaicorporation.gov.in/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.109-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
+[![Next.js](https://img.shields.io/badge/Next.js-14.1%20(App%20Router)-black?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
+[![PostGIS](https://img.shields.io/badge/PostGIS-3.4%20(PostgreSQL%2016)-336791?style=for-the-badge&logo=postgresql&logoColor=white)](https://postgis.net/)
+[![Google Cloud](https://img.shields.io/badge/Google%20Cloud-APIs%20Connected-4285F4?style=for-the-badge&logo=googlecloud&logoColor=white)](https://cloud.google.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
+
+**HeatScape** turns thermal satellite imagery, live Google Cloud APIs, and real-time street sensor feeds into clear, budget-optimized municipal cooling projects across **all 15 Zones and 200 Wards of Greater Chennai**.
+
+[Live Web Demo](http://localhost:3002) • [API Swagger Reference](http://localhost:8000/docs) • [Architecture](#-system-architecture) • [How It Works](#-how-it-works-from-satellite-pixels-to-civic-tenders) • [Product Gallery](#-product-gallery) • [Docker Quickstart](#-running-the-platform-locally)
+
+</div>
+
+---
+
+## 📸 Product Gallery
+
+### 1. Spatiotemporal Trajectory Explorer (100m Citywide Grid & 3D Extrusions)
+> Visualizes 100m analytical grid cells across all 15 GCC zones with continuous thermal interpolation, layer toggles, and multi-year climate projections.
+<div align="center">
+  <img src="docs/images/trajectory_explorer.png" alt="HeatScape 3D Trajectory Explorer" width="95%" style="border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 12px 36px rgba(0,0,0,0.8);"/>
+</div>
+
+---
+
+### 2. Cooling Scenario Planner (MILP Budget Optimizer)
+> City engineers enter an available ward budget (e.g. ₹50 Lakhs); Google OR-Tools solves for the exact combination of cool roofs, Miyawaki forests, and shade canopies that maximizes cooling for vulnerable residents under the Tamil Nadu PWD 2024 Schedule of Rates.
+<div align="center">
+  <img src="docs/images/cooling_scenario_planner.png" alt="HeatScape Cooling Scenario Planner" width="95%" style="border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 12px 36px rgba(0,0,0,0.8);"/>
+</div>
+
+---
+
+### 3. Multi-View Spatial Matrix (4-Layer Comparison)
+> Side-by-side comparative inspection of Surface Temperature, Tree Canopy Fraction, Built Infrastructure, and Social Vulnerability with 1-click contractor tender exports.
+<div align="center">
+  <img src="docs/images/multi_view_matrix.png" alt="HeatScape Multi-View Matrix" width="95%" style="border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 12px 36px rgba(0,0,0,0.8);"/>
+</div>
+
+---
+
+### 4. Post-Intervention Impact Monitoring & Counterfactual MRV
+> Tracks empirical sensor telemetry against pre-intervention baselines using Difference-in-Differences causal inference to verify that public cooling investments achieved their targeted thermal drops.
+<div align="center">
+  <img src="docs/images/impact_monitoring.png" alt="HeatScape Impact Monitoring" width="95%" style="border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 12px 36px rgba(0,0,0,0.8);"/>
+</div>
+
+---
+
+### 5. TreeSHAP AI Biophysical Explainability
+> Isolates the physical drivers of localized heat (vegetation deficit, asphalt concrete fraction, and street canyon wind blockage) so engineers know exactly what physical remedy to prescribe.
+<div align="center">
+  <img src="docs/images/urban_intelligence.png" alt="HeatScape TreeSHAP Biophysical Intelligence" width="95%" style="border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 12px 36px rgba(0,0,0,0.8);"/>
+</div>
 
 ---
 
@@ -28,7 +78,7 @@ flowchart TB
         grid["100m Spatial Grid Engine"]
         regime["Thermal Regime Classifier (Persistent vs Emerging)"]
         shap["TreeSHAP Biophysical Explainer (AI Diagnostics)"]
-        opt["Google OR-Tools MILP Capital Budget Optimizer"]
+        opti["Google OR-Tools MILP Capital Budget Optimizer"]
         breeze["Sea Breeze & Street Canyon Microclimate Models"]
     end
 
@@ -54,20 +104,23 @@ flowchart TB
     grid --> postgis
     grid --> regime
     regime --> shap
-    shap --> opt
-    opt --> postgis
+    shap --> opti
+    opti --> postgis
 
-    BackendServices <--> redis
-    postgis <--> BackendServices
-
-    BackendServices -->|REST API & WebSockets| FrontendUI
+    grid <--> redis
+    grid --> map2d
+    opti --> sim
+    breeze --> field3d
+    grid --> eoc
+    grid --> nav
+    grid --> landing
 ```
 
 ---
 
 ## 🔄 How It Works: From Satellite Pixels to Civic Tenders
 
-HeatScape follows a 5-step operational pipeline that bridges satellite observation directly to municipal public works:
+HeatScape follows an automated 5-step operational pipeline connecting satellite observation directly to public works:
 
 ```mermaid
 sequenceDiagram
@@ -75,41 +128,41 @@ sequenceDiagram
     participant Sat as Satellites & Sensors
     participant Grid as 100m Grid Engine
     participant AI as AI Root-Cause Explainer
-    participant Opt as Budget Optimizer (MILP)
+    participant Optimizer as Budget Optimizer (MILP)
     participant Admin as City Engineers & Public Works
 
-    Sat->>Grid: Ingest surface temperatures, tree canopy, & air quality
+    Sat->>Grid: Ingest surface temperatures, tree canopy, and air quality
     Note over Grid: City is divided into uniform 100m blocks across all 15 zones
     Grid->>Grid: Compare current temperature to 36-month baseline
     Grid->>AI: Identify hotspots heating up faster than average
-    AI->>AI: Decompose root cause (e.g., 42% green deficit, 31% asphalt)
-    AI->>Opt: Pass flagged blocks with population & vulnerability data
-    Admin->>Opt: Input available municipal budget (e.g., ₹50 Lakhs)
-    Opt->>Opt: Match interventions against Tamil Nadu PWD 2024 Schedule of Rates
-    Opt->>Admin: Export Council Briefing Resolution & Contractor Tendering GeoJSON
+    AI->>AI: Decompose root cause (e.g. 42% green deficit and 31% asphalt)
+    AI->>Optimizer: Pass flagged blocks with population and vulnerability data
+    Admin->>Optimizer: Input available municipal budget (e.g. ₹50 Lakhs)
+    Optimizer->>Optimizer: Match interventions against Tamil Nadu PWD 2024 SSR
+    Optimizer->>Admin: Export Council Briefing Resolution & Contractor Tendering GeoJSON
 ```
 
 ### 1. The 100-Meter Spatiotemporal City Grid
-* Chennai is split into continuous **100m × 100m blocks** (each is 1 hectare) covering all **15 Zones** (from Thiruvottiyur and Manali in the north, to T. Nagar and Anna Nagar in the center, down to Adyar and Sholinganallur in the south).
+* Chennai is divided into continuous **100m × 100m blocks** (each is 1 hectare) covering all **15 Zones** (from Thiruvottiyur and Manali in the north, to T. Nagar and Anna Nagar in the center, down to Adyar and Sholinganallur in the south).
 * Every single block tracks:
   * **Surface temperature anomaly**: How much hotter it is compared to the city's seasonal baseline.
   * **Tree canopy fraction**: Percentage of natural shade coverage.
   * **Built impervious surface**: Percentage of heat-absorbing asphalt and concrete.
-  * **Population density**: How many residents are living or working within that block.
+  * **Population density**: How many residents live or work within that block.
 
 ### 2. Multi-Year Trend Detection (Not Just a Single Hot Day)
-Instead of looking at isolated spikes, HeatScape analyzes 36 months of history for each cell and sorts it into one of 5 clear operational categories:
-* **Persistent**: Consistently hot year after year (e.g., dense commercial corridors).
+Instead of reacting to isolated spikes, HeatScape analyzes 36 months of history for each cell and categorizes it into one of 5 clear operational states:
+* **Persistent**: Consistently hot year after year (e.g. dense commercial corridors).
 * **Emerging**: Rapidly heating up year-over-year due to new construction or loss of vegetation.
 * **Improving**: Actively cooling down as a result of recent greening or park restorations.
 * **Temporary**: Brief, short-lived spikes caused by seasonal weather swings.
 * **Watch**: Stable areas with minor, non-critical fluctuations.
 
 ### 3. Clear Root-Cause Explanations (No Black Boxes)
-City engineers don't need obscure AI scores—they need to know *what to fix*. HeatScape's TreeSHAP explainability engine breaks down the exact physical reasons why a block is overheating:
+City engineers need to know *what to fix*. HeatScape's TreeSHAP explainability engine isolates the exact physical factors causing each block to overheat:
 * **Vegetation Deficit**: Lack of tree canopy and soil moisture.
-* **Impervious Concrete/Asphalt**: Sealed roads and terraces absorbing solar radiation during the day and re-radiating heat at night.
-* **Street Canyon Trapping**: Tall, narrow building layouts that block incoming cooling wind.
+* **Impervious Asphalt/Concrete**: Sealed roads and terraces absorbing solar radiation during the day and re-radiating heat at night.
+* **Street Canyon Trapping**: Tall, narrow building layouts that block incoming cooling winds.
 
 ### 4. Mathematical Budget Optimization (MILP Solver)
 Municipal budgets are strictly limited. HeatScape uses Mixed-Integer Linear Programming to answer one fundamental question:
@@ -131,7 +184,7 @@ It matches candidate locations directly to the official **Tamil Nadu Public Work
 
 ---
 
-## 📱 Application Screens & What They Do
+## 📱 Application Screens & Directory
 
 ```mermaid
 graph LR
@@ -162,7 +215,7 @@ graph LR
     Eoc --> Field
 ```
 
-| Screen | URL | What You Can Do Here |
+| Screen | URL | Purpose & Capabilities |
 | :--- | :--- | :--- |
 | **Command Overview** | `/` | Executive landing page explaining HeatScape's mission, impact metrics, and quick ward search. |
 | **Trajectories Map** | `/explorer` | Full MapLibre GL map with 100m grid cells across all 15 GCC zones, layer toggles, and 2020–2030 climate timelines. |
@@ -179,8 +232,6 @@ graph LR
 ---
 
 ## 🌐 Data Sources Used
-
-HeatScape operates on an integrated data stack combining satellite data, ground sensors, and live cloud APIs:
 
 ```mermaid
 flowchart LR
