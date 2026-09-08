@@ -1,4 +1,4 @@
-# HeatScape: Spatiotemporal Urban Heat Intelligence & Intervention Planner
+# HeatScape: Greater Chennai Corporation Urban Heat Platform
 
 [![Greater Chennai Corporation](https://img.shields.io/badge/GCC-Urban%20Climate%20Resilience-orange?style=flat-square)](https://chennaicorporation.gov.in/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.109-009688?style=flat-square&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
@@ -7,278 +7,281 @@
 [![Google Cloud](https://img.shields.io/badge/Google%20Cloud-APIs%20Connected-4285F4?style=flat-square&logo=googlecloud&logoColor=white)](https://cloud.google.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](https://opensource.org/licenses/MIT)
 
-**HeatScape** is an enterprise-grade spatiotemporal decision-support, thermal risk observability, and capital intervention planning platform engineered for the **Greater Chennai Corporation (GCC)**, Tamil Nadu, India.
+**HeatScape** is an urban climate intelligence and intervention planning platform engineered for the **Greater Chennai Corporation (GCC)**. 
 
-It bridges raw multi-spectral satellite thermal imagery (Landsat-8/9 TIRS, Sentinel-2 MSI), Google Cloud Platform APIs (Elevation & Air Quality), and real-time microclimate IoT sensor feeds into operational civic action. HeatScape classifies multi-year thermal trajectories across 100m spatial cells, isolates biophysical drivers using TreeSHAP, detects spatial clustering with Getis-Ord $G_i^*$, and prescribes budget-optimized cooling interventions via Mixed-Integer Linear Programming (MILP) mapped directly to the **Tamil Nadu PWD 2024 Schedule of Rates (SSR)**.
+It takes thermal satellite imagery, live Google Cloud APIs, and real-time street sensor data, and turns them into clear, street-level cooling actions. Instead of overwhelming city administrators with raw GIS files, HeatScape detects which 100-meter blocks are dangerously hot, explains *why* they are hot (lack of trees, excessive asphalt, or trapped air), and mathematically calculates the most cost-effective cooling interventions to deploy within municipal budgets.
 
 ---
 
-## 🏛️ System Architecture
+## 🏗️ System Architecture
 
+```mermaid
+flowchart TB
+    subgraph DataSources["1. Earth Observation & Ground Telemetry"]
+        sat["Thermal Satellites (Landsat-9 & Sentinel-2)"]
+        sensors["842 In-Situ IoT Street Sensors (LoRaWAN)"]
+        gcp["Google Cloud APIs (Elevation & Air Quality)"]
+        gis["GCC City Boundaries (15 Zones • 200 Wards)"]
+    end
+
+    subgraph BackendServices["2. Backend Application Engine (FastAPI & Python)"]
+        grid["100m Spatial Grid Engine"]
+        regime["Thermal Regime Classifier (Persistent vs Emerging)"]
+        shap["TreeSHAP Biophysical Explainer (AI Diagnostics)"]
+        opt["Google OR-Tools MILP Capital Budget Optimizer"]
+        breeze["Sea Breeze & Street Canyon Microclimate Models"]
+    end
+
+    subgraph DataPersistence["3. Storage & Cache"]
+        postgis[("PostgreSQL 16 + PostGIS 3.4 (Spatial Database)")]
+        redis[("Redis 7.2 (Cache & Celery Queue)")]
+    end
+
+    subgraph FrontendUI["4. Interactive User Interface (Next.js 14)"]
+        landing["Landing Overview (Executive Value Summary)"]
+        map2d["MapLibre GL 2D Grid (All 15 GCC Zones)"]
+        field3d["Three.js 3D WebGL (Urban Heat Field)"]
+        sim["Scenario Simulator (Budget Allocation)"]
+        eoc["EOC Crisis Room (GRAP Alert Tiers)"]
+        nav["Cool Navigator (Shaded Pedestrian Routing)"]
+    end
+
+    sat --> grid
+    sensors --> grid
+    gcp --> breeze
+    gis --> grid
+
+    grid --> postgis
+    grid --> regime
+    regime --> shap
+    shap --> opt
+    opt --> postgis
+
+    BackendServices <--> redis
+    postgis <--> BackendServices
+
+    BackendServices -->|REST API & WebSockets| FrontendUI
 ```
-                                  USER INTERFACE LAYER
-┌─────────────────────────────────────────────────────────────────────────────────────────┐
-│ Next.js 14 (App Router) • React 18 • TypeScript • Tailwind CSS                          │
-│                                                                                         │
-│  ┌──────────────────────┐  ┌──────────────────────┐  ┌───────────────────────────────┐  │
-│  │    MapLibre GL 2D    │  │   Three.js 3D WebGL  │  │  Keyboard Command Palette     │  │
-│  │  100m Vector Grid    │  │   Urban Heat Field   │  │  (⌘K Ward Intelligence)       │  │
-│  │  Multi-Layer Shading │  │   Procedural Masses  │  │  Fuzzy Locality Search        │  │
-│  └──────────────────────┘  └──────────────────────┘  └───────────────────────────────┘  │
-│                                                                                         │
-│  11 Operational Screens:                                                                │
-│  • / (Command Center)       • /explorer (Trajectories)  • /multiview (Matrix Grid)       │
-│  • /simulator (MILP Solver) • /monitoring (MRV / DiD)   • /intelligence (TreeSHAP)       │
-│  • /eoc (GRAP Crisis Room)  • /navigator (Cool Paths)   • /studio (Terrain & Sea Breeze) │
-│  • /field (Incident Kanban) • /pitch (Executive Deck)                                   │
-└────────────────────────────────────────┬────────────────────────────────────────────────┘
-                                         │ HTTP REST & WebSockets (Port 3002 -> 8000)
-                                         ▼
-                               APPLICATION SERVER LAYER
-┌─────────────────────────────────────────────────────────────────────────────────────────┐
-│ FastAPI (Python 3.11) Asynchronous Web Engine                                           │
-│                                                                                         │
-│  ┌────────────────────────┐  ┌─────────────────────────┐  ┌──────────────────────────┐  │
-│  │   Spatial Endpoints    │  │   Optimizer Engine      │  │    Microclimate Services │  │
-│  │   /api/v1/heat/*       │  │   Google OR-Tools MILP  │  │    Bay of Bengal Breeze  │  │
-│  │   GeoJSON Streaming    │  │   PWD 2024 Cost Catalog │  │    Oke Street Canyon     │  │
-│  └────────────────────────┘  └─────────────────────────┘  └──────────────────────────┘  │
-│                                                                                         │
-│  ┌────────────────────────┐  ┌─────────────────────────┐  ┌──────────────────────────┐  │
-│  │   Google Cloud APIs    │  │   Explainability ML     │  │    IoT Telemetry Stream  │  │
-│  │   Elevation API        │  │   XGBoost Regressor     │  │    842 LoRaWAN Sensors   │  │
-│  │   Air Quality API      │  │   TreeSHAP Explainer    │  │    Steadman Heat Index   │  │
-│  │   Geocoding API        │  │   Sen's Slope & PELT    │  │    IMD GRAP Tiers 0-3    │  │
-│  └────────────────────────┘  └─────────────────────────┘  └──────────────────────────┘  │
-└──────────────────────┬───────────────────────────────────────────────────┬──────────────┘
-                       │                                                   │
-                       ▼                                                   ▼
-             DATA PERSISTENCE LAYER                             BACKGROUND ASYNC WORKERS
-┌──────────────────────────────────────────────────┐     ┌────────────────────────────────┐
-│ PostgreSQL 16 + PostGIS 3.4                      │     │ Redis 7.2 Cache + Celery       │
-│                                                  │     │                                │
-│ • spatial_cells (100m UTM Zone 44N EPSG:32644)   │     │ • Distributed Task Queue       │
-│ • cell_observations (36-month time series)       │     │ • Satellite Raster Ingestion   │
-│ • thermal_trajectories (Sen's slope, archetypes) │     │ • Real-time Telemetry Cache    │
-│ • intervention_catalog (Tamil Nadu PWD rates)    │     │ • WebSocket Push Dispatcher    │
-└──────────────────────────────────────────────────┘     └────────────────────────────────┘
+
+---
+
+## 🔄 How It Works: From Satellite Pixels to Civic Tenders
+
+HeatScape follows a 5-step operational pipeline that bridges satellite observation directly to municipal public works:
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Sat as Satellites & Sensors
+    participant Grid as 100m Grid Engine
+    participant AI as AI Root-Cause Explainer
+    participant Opt as Budget Optimizer (MILP)
+    participant Admin as City Engineers & Public Works
+
+    Sat->>Grid: Ingest surface temperatures, tree canopy, & air quality
+    Note over Grid: City is divided into uniform 100m blocks across all 15 zones
+    Grid->>Grid: Compare current temperature to 36-month baseline
+    Grid->>AI: Identify hotspots heating up faster than average
+    AI->>AI: Decompose root cause (e.g., 42% green deficit, 31% asphalt)
+    AI->>Opt: Pass flagged blocks with population & vulnerability data
+    Admin->>Opt: Input available municipal budget (e.g., ₹50 Lakhs)
+    Opt->>Opt: Match interventions against Tamil Nadu PWD 2024 Schedule of Rates
+    Opt->>Admin: Export Council Briefing Resolution & Contractor Tendering GeoJSON
 ```
 
----
+### 1. The 100-Meter Spatiotemporal City Grid
+* Chennai is split into continuous **100m × 100m blocks** (each is 1 hectare) covering all **15 Zones** (from Thiruvottiyur and Manali in the north, to T. Nagar and Anna Nagar in the center, down to Adyar and Sholinganallur in the south).
+* Every single block tracks:
+  * **Surface temperature anomaly**: How much hotter it is compared to the city's seasonal baseline.
+  * **Tree canopy fraction**: Percentage of natural shade coverage.
+  * **Built impervious surface**: Percentage of heat-absorbing asphalt and concrete.
+  * **Population density**: How many residents are living or working within that block.
 
-## 📊 Data Sources & Earth Observation Inputs
+### 2. Multi-Year Trend Detection (Not Just a Single Hot Day)
+Instead of looking at isolated spikes, HeatScape analyzes 36 months of history for each cell and sorts it into one of 5 clear operational categories:
+* **Persistent**: Consistently hot year after year (e.g., dense commercial corridors).
+* **Emerging**: Rapidly heating up year-over-year due to new construction or loss of vegetation.
+* **Improving**: Actively cooling down as a result of recent greening or park restorations.
+* **Temporary**: Brief, short-lived spikes caused by seasonal weather swings.
+* **Watch**: Stable areas with minor, non-critical fluctuations.
 
-HeatScape fuses continuous multi-source spatiotemporal data covering all **15 Zones and 200 Wards of Greater Chennai**:
+### 3. Clear Root-Cause Explanations (No Black Boxes)
+City engineers don't need obscure AI scores—they need to know *what to fix*. HeatScape's TreeSHAP explainability engine breaks down the exact physical reasons why a block is overheating:
+* **Vegetation Deficit**: Lack of tree canopy and soil moisture.
+* **Impervious Concrete/Asphalt**: Sealed roads and terraces absorbing solar radiation during the day and re-radiating heat at night.
+* **Street Canyon Trapping**: Tall, narrow building layouts that block incoming cooling wind.
 
-| Data Layer | Source / Provider | Spatial Resolution | Temporal Frequency | Utilization in HeatScape |
-| :--- | :--- | :--- | :--- | :--- |
-| **Land Surface Temp (LST)** | Landsat-8/9 TIRS (Band 10) & ECOSTRESS | 30m / 70m resampled to 100m | 8-day revisit | Baseline temporal anomaly ($A_{\text{self}}$) and contextual anomaly ($A_{\text{spatial}}$). |
-| **Vegetation Health (NDVI)** | Sentinel-2 MSI (Bands 4 & 8) | 10m | 5-day revisit | Tree canopy coverage ($0.0 - 1.0$) and green deficit mapping. |
-| **Built-up Impervious Surface** | OpenStreetMap (OSM) & High-Res Sentinel-2 | Vector / 10m | Bi-annual sync | Impervious fraction, road density, and rooftop area calculations. |
-| **3D Building Envelopes** | GCC City GIS & OSM 3D Poly | Metric polygons | Annual sync | Street canyon aspect ratio ($H/W$), sky view factor (SVF), and aerodynamic roughness. |
-| **Topography & Elevation** | Google Elevation API & SRTM DEM | Metric MSL points | Continuous query | 3D terrain profile, contour shading, and elevation above sea level. |
-| **Live Ambient Air Quality** | Google Air Quality API | Point coordinates | Real-time hourly | Microclimate PM2.5, PM10, Universal AQI, and health advisory metrics. |
-| **In-Situ IoT Environmental Grid** | 842 LoRaWAN (IN865) / MQTT Sensors | Fixed street nodes | 1-minute telemetry | Ground-truth verification, ambient temperature, humidity, and Steadman Apparent Heat Index. |
-| **Official Administrative Limits** | Greater Chennai Corporation (GCC) | 200 Wards, 15 Zones | Administrative | Zone-wise equity budgeting, PWD division boundaries, and ward council briefs. |
+### 4. Mathematical Budget Optimization (MILP Solver)
+Municipal budgets are strictly limited. HeatScape uses Mixed-Integer Linear Programming to answer one fundamental question:
+> *"Given a budget of ₹50 Lakhs in Ward 118, which specific interventions should we build, and where, to achieve the highest cooling impact for the most vulnerable citizens?"*
 
----
+It matches candidate locations directly to the official **Tamil Nadu Public Works Department (PWD) 2024 Schedule of Rates**:
+* **High-Albedo Cool Roof Coating** (SRI > 104): ₹150 / sq.meter (delivers $-0.8^\circ\text{C}$ to $-1.5^\circ\text{C}$ surface drop).
+* **Dense Pocket Miyawaki Urban Forests** (native species): ₹3,000 / tree (delivers $-1.1^\circ\text{C}$ to $-2.0^\circ\text{C}$ cooling).
+* **Permeable Interlocking Concrete Pavers**: ₹600 / sq.meter (reduces heat re-radiation and aids groundwater recharge).
+* **Tensile Modular Shade Canopies**: ₹55,000 / transit stop (immediate $-3.0^\circ\text{C}$ radiant shade relief for commuters).
 
-## 🔬 Core Algorithms & Mathematical Foundations
-
-### 1. Unified 100m Spatiotemporal Grid
-- **CRS**: UTM Zone 44N (**EPSG:32644**) for metric accuracy without projection distortion.
-- **Cell Dimension**: Uniform $100\text{m} \times 100\text{m}$ grid cells ($10,000\text{ m}^2 = 1.0\text{ hectare}$).
-- **Coverage**: Complete metropolitan canvas covering all 15 GCC Zones (North: Thiruvottiyur, Manali, Madhavaram; Central: Royapuram, Anna Nagar, Teynampet, Kodambakkam; South: Guindy, Adyar, Velachery, Sholinganallur).
-- **Web Delivery**: Projected on-the-fly to WGS84 (**EPSG:4326**) via PostGIS `ST_AsGeoJSON`.
-
-### 2. Dual-Anomaly Formulation
-- **Temporal Baseline Anomaly ($A_{\text{self}}$)**: Deviation of cell $i$ in month $t$ from its multi-year seasonal climatological mean:
-  $$A_{\text{self}}(i, t) = T(i, t) - \mu_{\text{clim}}(i, m(t))$$
-- **Spatial Contextual Anomaly ($A_{\text{spatial}}$)**: Contrast with Queen-contiguous 8-neighborhood ($\mathcal{N}_8$):
-  $$A_{\text{spatial}}(i, t) = T(i, t) - \frac{1}{|\mathcal{N}_8(i)|}\sum_{j \in \mathcal{N}_8(i)} T(j, t)$$
-
-### 3. Trajectory Regime & Trend Detection
-- **Non-Parametric Sen's Slope**:
-  $$\beta = \text{median}\left(\left\{\frac{A(t_j) - A(t_i)}{t_j - t_i} : t_i < t_j\right\}\right)$$
-- **PELT (Pruned Exact Linear Time)**: Segmentations with BIC penalty detecting structural regime shifts:
-  $$\min_{\tau} \sum_{k=1}^{m} \mathcal{C}(y_{\tau_{k-1}:\tau_k}) + \beta_{\text{pen}} m$$
-- **5-State Classification Machine**:
-  - `PERSISTENT`: Consistently elevated anomaly ($A > +1.5^\circ\text{C}$) with minimal trend.
-  - `EMERGING`: Statistically significant positive trend ($\beta > +0.02^\circ\text{C}/\text{month}$, $p < 0.05$).
-  - `IMPROVING`: Statistically significant cooling trend ($\beta < -0.02^\circ\text{C}/\text{month}$).
-  - `TEMPORARY`: Transient spike with regime shift reverting to baseline.
-  - `WATCH`: Low variance, borderline anomaly ($0.5^\circ\text{C} \le A < 1.5^\circ\text{C}$).
-
-### 4. TreeSHAP Biophysical Attribution
-Trained Gradient Boosted Trees (XGBoost) model surface thermal anomaly as a function of biophysical parameters:
-$$\text{Anomaly}_i = f(\text{NDVI}_i, \text{Impervious}_i, \text{BuildingDensity}_i, \text{WaterDist}_i, \text{Elevation}_i, \text{SVF}_i)$$
-TreeSHAP computes exact Shapley values isolating the localized contribution of each physical factor:
-$$\phi_j = \sum_{S \subseteq F \setminus \{j\}} \frac{|S|!(|F| - |S| - 1)!}{|F|!} \left( f_x(S \cup \{j\}) - f_x(S) \right)$$
-Enables municipal engineers to see why a ward is hot (e.g., *42% Vegetation Deficit, 31% Impervious Asphalt, 18% Street Canyon Trapping*).
-
-### 5. Mixed-Integer Linear Programming (MILP) Intervention Optimizer
-Solves for maximum population thermal relief subject to municipal budget limits:
-$$\max \sum_{i \in \text{Cells}} \sum_{k \in \text{Interventions}} \left( c_{ik} \cdot x_{ik} \cdot P_i \cdot E_i \cdot (1 + \lambda_{\text{cluster}} \cdot \mathbf{1}_{\text{hotspot}}(i)) \right)$$
-$$\text{subject to: } \sum_{i} \sum_{k} \text{Cost}_k \cdot x_{ik} \le \text{Budget}_{\text{INR}}$$
-$$\text{AreaLimit: } \sum_{k} \text{Footprint}_k \cdot x_{ik} \le \text{ApplicableArea}_i, \quad \forall i$$
-Where:
-- $c_{ik}$: Empirical cooling effect of intervention $k$ in cell $i$.
-- $P_i$: Population density of cell $i$.
-- $E_i$: Climate vulnerability equity index based on elderly, infant, and informal housing ratios.
-- $x_{ik} \in \{0, 1\}$: Binary or integer allocation variables.
-
-### 6. Official Tamil Nadu PWD 2024 Schedule of Rates (SSR)
-- **`TN-PWD-2024-SSR-CIV-4412`**: High-Albedo Elastomeric Cool Roof Thermal Coating (SRI > 104) — ₹150/sq.m.
-- **`TN-PWD-2024-SSR-HOR-1022`**: Dense Miyawaki Urban Canopy Forestry (Native *Pongamia pinnata*, *Azadirachta indica*) — ₹3,000/tree.
-- **`TN-PWD-2024-SSR-CIV-2915`**: Permeable High-Albedo Interlocking Concrete Pavers (Albedo 0.42) — ₹600/sq.m.
-- **`TN-PWD-2024-SSR-MEP-5530`**: Transit Hub Tensile Shade Membrane with Photovoltaic Backing — ₹55,000/canopy.
-- **`TN-PWD-2024-ENV-8840`**: Urban Wetland & Retention Basin Bio-Engineering — ₹850/sq.m.
-
-### 7. Bay of Bengal Sea Breeze (BBSB) & Street Canyon Microclimate Modeling
-- **Marine Layer Intrusion**: Calculates sea breeze cooling delta as a function of coastal distance and inland air temperature:
-  $$\Delta T_{\text{breeze}} = \Delta T_{\max} \cdot \exp\left(-\frac{d_{\text{coast}}}{L_{\text{decay}}}\right) \cdot \sin\left(\frac{\pi(h - 10)}{8}\right)$$
-- **Oke (1988) Street Canyon Aerodynamic Trapping**:
-  $$\text{SVF} = \cos(\arctan(2H/W)), \quad \text{TrappingIndex} = (1 - \text{SVF}) \cdot \left(1 - \frac{u_{\text{canyon}}}{u_{\text{ambient}}}\right)$$
+### 5. Emergency Crisis Management & Citizen Shading
+* **Real-Feel Heat Index**: Combines ambient temperature with Chennai's coastal humidity ($60\%\text{--}80\%$). A $35^\circ\text{C}$ day with high humidity feels like $46^\circ\text{C}$ on the human body.
+* **GCC Graded Response Action Plan (GRAP)**:
+  * **Stage 1 (Watch)**: Activates 120+ *Thanneer Pandals* (drinking water kiosks) across transit corridors.
+  * **Stage 2 (Severe)**: Mandates statutory outdoor work halts (12 PM – 3 PM) for construction and sanitation staff, and dispatches evaporative misting truck fleets.
+  * **Stage 3 (Extreme)**: Converts GCC community halls into 24/7 air-conditioned cooling shelters.
+* **Citizen Cool Navigator**: Functions like pedestrian navigation, but instead of finding the fastest route, it calculates the **most shaded path**, guiding walkers through tree-lined streets and shaded corridors.
 
 ---
 
-## 🧭 Production Screen Directory
+## 📱 Application Screens & What They Do
 
-| Route | Name | Key Functionality |
+```mermaid
+graph LR
+    subgraph Public["Public & Overview"]
+        Home["/ (Landing Overview)"]
+        Nav["/navigator (Cool Walk)"]
+        Pitch["/pitch (Executive Deck)"]
+    end
+
+    subgraph Analytics["Analytics & Engineering"]
+        Exp["/explorer (2D/3D Map)"]
+        Multi["/multiview (4-Layer Matrix)"]
+        Intel["/intelligence (AI SHAP)"]
+        Studio["/studio (3D Terrain & Breeze)"]
+    end
+
+    subgraph Operations["Operations & Administration"]
+        Sim["/simulator (Budget Optimizer)"]
+        Mon["/monitoring (Impact Verification)"]
+        Eoc["/eoc (Crisis Command Room)"]
+        Field["/field (Field Inspections)"]
+    end
+
+    Home --> Exp
+    Home --> Sim
+    Exp --> Intel
+    Sim --> Mon
+    Eoc --> Field
+```
+
+| Screen | URL | What You Can Do Here |
 | :--- | :--- | :--- |
-| **`/`** | **Operational Landing** | Executive overview, clear value explanation, interactive ward search, impact metrics, and scenario previews. |
-| **`/explorer`** | **Trajectories Map** | Full MapLibre GL 2D/3D map with 100m grid cells across all 15 zones, continuous thermal blanket, layer switcher, and time projection. |
-| **`/multiview`** | **Multi-View Matrix** | 4-layer spatial inspection matrix (`Surface Temp`, `NDVI Canopy`, `Built Impervious`, `Vulnerability`), corridor vectors, and tender exports. |
-| **`/simulator`** | **Cooling Scenario Planner** | Google OR-Tools MILP intervention optimizer with budget sliders, target wards, 5-year lifecycle O&M costing, and council briefs. |
-| **`/monitoring`** | **Impact Monitoring & MRV** | Difference-in-Differences (DiD) causal counterfactual inference, pre/post intervention validation, and sensor drift telemetry. |
-| **`/intelligence`** | **Urban Intelligence & Equity** | Getis-Ord $G_i^*$ spatial autocorrelation clusters ($Z > +2.58\sigma$), demographic vulnerability weights, and global TreeSHAP rankings. |
-| **`/eoc`** | **EOC Crisis Room** | Emergency Operations Center: Real-time GCC Graded Response Action Plan (GRAP Stages 0–3), labor bans, and evaporative misting truck dispatch. |
-| **`/navigator`** | **Citizen Cool Navigator** | A* Shaded Pedestrian Routing Engine: Direct vs. Shaded Cool Route comparisons with thermal relief deltas and hydration POIs. |
-| **`/studio`** | **Open Data & 3D Studio** | STAC/GeoJSON upload, 3D elevation profiling, Oke street canyon analyzer, and Bay of Bengal sea breeze penetration graphs. |
-| **`/field`** | **Field Ops & Kanban** | Citizen heat incident triage (English & Tamil), mobile field audit checklist, and real-time intervention photo verification. |
-| **`/pitch`** | **Executive Pitch Deck** | 7-slide executive presentation suite with interactive sandboxes, apparent heat calculator, and live capital budget sliders. |
+| **Command Overview** | `/` | Executive landing page explaining HeatScape's mission, impact metrics, and quick ward search. |
+| **Trajectories Map** | `/explorer` | Full MapLibre GL map with 100m grid cells across all 15 GCC zones, layer toggles, and 2020–2030 climate timelines. |
+| **Multi-View Matrix** | `/multiview` | 4-layer comparison matrix (`Surface Temp`, `Tree Canopy`, `Built Roads`, `Vulnerability`) and tender corridor exports. |
+| **Scenario Simulator** | `/simulator` | Interactive budget slider and MILP optimizer that outputs Council Briefing Memorandums and cost breakdowns. |
+| **Impact Monitoring** | `/monitoring` | Difference-in-Differences (DiD) verification showing before-and-after cooling results of completed civil projects. |
+| **Urban Intelligence** | `/intelligence` | TreeSHAP AI explainability rankings and demographic vulnerability hotspot maps. |
+| **EOC Crisis Room** | `/eoc` | Emergency Operations Center tracking GRAP alert levels, mandatory work halts, and misting truck routes. |
+| **Cool Navigator** | `/navigator` | Pedestrian shaded route planner that routes citizens along tree canopies and past public water kiosks. |
+| **Terrain & Sea Breeze** | `/studio` | 3D elevation profiling and Bay of Bengal marine sea breeze intrusion graphs. |
+| **Field Ops & Kanban** | `/field` | Mobile field checklist, Tamil voice note transcription, and photo verification for municipal ground staff. |
+| **Executive Pitch Deck** | `/pitch` | 7-slide interactive pitch deck with built-in live calculators and scenario sandboxes. |
 
 ---
 
-## 📡 REST API Reference
+## 🌐 Data Sources Used
 
-The backend exposes a fully documented, asynchronous REST API via FastAPI at `http://localhost:8000/docs`.
+HeatScape operates on an integrated data stack combining satellite data, ground sensors, and live cloud APIs:
 
-### Core Heat & Grid Endpoints
-- `GET /api/v1/heat/cells/geojson`: Streams analytical 100m grid cells in GeoJSON format (EPSG:4326) with filter parameters (`min_anomaly`, `state`, `ward_id`, `limit`).
-- `GET /api/v1/heat/cells/{cell_id}/history`: Chronological 36-month thermal and biophysical observation records.
-- `GET /api/v1/heat/cells/{cell_id}/explain`: TreeSHAP biophysical feature contributions for a specific cell.
-- `GET /api/v1/heat/kpi/summary`: Citywide macro-indicators (mean anomaly, persistent hotspots, vulnerable population).
+```mermaid
+flowchart LR
+    subgraph Space["Satellite Imagery"]
+        l9["Landsat-8/9 TIRS (Thermal Infrared Band 10)"]
+        s2["Sentinel-2 MSI (10m Multi-Spectral NDVI)"]
+    end
 
-### Google Cloud Platform Services
-- `GET /api/v1/google/elevation?lat={lat}&lon={lon}`: Live topographical elevation (meters above MSL) via Google Elevation API.
-- `GET /api/v1/google/air-quality?lat={lat}&lon={lon}`: Live ambient air quality (AQI, PM2.5, PM10) via Google Air Quality API.
-- `GET /api/v1/google/geocode?address={address}`: Forward geocoding for Chennai landmarks and wards via Google Geocoding API.
+    subgraph Ground["Ground & Cloud Telemetry"]
+        lora["842 LoRaWAN Environmental Sensors"]
+        elev["Google Elevation API (MSL Elevation)"]
+        aqi["Google Air Quality API (Hourly AQI & PM)"]
+        osm["OpenStreetMap 3D Building Envelopes"]
+        gcc["GCC GIS (15 Zones • 200 Wards)"]
+    end
 
-### Optimization & Scenarios
-- `POST /api/v1/scenarios/optimize`: Solves MILP capital allocation for user-selected budget, wards, and intervention constraints.
-- `GET /api/v1/scenarios/catalog`: Catalogs eligible interventions mapped to Tamil Nadu PWD 2024 SSR unit rates.
-- `POST /api/v1/scenarios/council-resolution`: Exports an automated GCC Municipal Briefing Memorandum in PDF/Markdown.
+    subgraph HeatScapeEngine["HeatScape Spatial Core"]
+        grid100["100m Analytical Cells across Greater Chennai"]
+    end
 
-### Microclimate & Terrain
-- `GET /api/v1/terrain/elevation?lat={lat}&lon={lon}`: High-precision terrain height above MSL.
-- `GET /api/v1/terrain/transects/{transect_id}`: Cross-sectional elevation and sea breeze penetration along urban transects.
-- `GET /api/v1/terrain/sea-breeze`: Calculates Bay of Bengal marine boundary layer intrusion and temperature offset.
-- `POST /api/v1/terrain/street-canyon/analyze`: Computes street canyon aspect ratio ($H/W$), SVF, and thermal trapping index.
+    Space --> HeatScapeEngine
+    Ground --> HeatScapeEngine
+```
 
-### IoT Sensor Mesh & EOC Crisis
-- `GET /api/v1/sensors/live`: Real-time telemetry feed from Chennai's 842 LoRaWAN sensor nodes.
-- `GET /api/v1/hazard/heatwave-forecast`: 7-day IMD heatwave alert levels (Green, Yellow, Orange, Red).
-- `GET /api/v1/hazard/grap-status`: Active GCC GRAP protocol stage and mandatory civil enforcement triggers.
-- `POST /api/v1/routing/cool-path`: Computes A* shaded pedestrian routes with hydration refuge waypoints.
+* **Thermal Infrared (LST)**: Landsat-8/9 TIRS & ECOSTRESS surface temperatures (re-sampled to 100m precision).
+* **Vegetation Health (NDVI)**: Sentinel-2 MSI 10m bands 4 (Red) and 8 (Near-Infrared) measuring tree canopy density.
+* **Topography & Elevation**: Google Elevation API and SRTM models measuring ground height above sea level.
+* **Live Microclimate & Air Quality**: Google Air Quality API providing real-time Universal AQI, PM2.5, and PM10 values.
+* **Ground-Truth Sensors**: 842 LoRaWAN IoT environmental sensor nodes deployed across commercial and transit hubs in Chennai.
+* **Official Municipal Boundaries**: Greater Chennai Corporation 15 administrative zones and 200 electoral wards.
 
 ---
 
-## 🐳 Docker Deployment & Microservices
+## 🚀 Running the Platform Locally
 
-The entire platform runs in containerized microservices managed via `docker-compose.yml`:
+The entire system is containerized with Docker and requires zero manual database setup.
 
-```yaml
-services:
-  postgis:
-    image: postgis/postgis:16-3.4
-    ports: ["5432:5432"]
-    volumes: [postgis_data:/var/lib/postgresql/data]
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d heatscape"]
+```mermaid
+flowchart TD
+    subgraph DockerCompose["Docker Compose Stack"]
+        fe["Frontend (Next.js 14) :3002"]
+        be["Backend (FastAPI) :8000"]
+        db[("PostGIS 3.4 Database :5432")]
+        rd[("Redis 7.2 Cache :6379")]
+    end
 
-  redis:
-    image: redis:7.2-alpine
-    ports: ["6379:6379"]
-
-  backend:
-    build: ./backend
-    ports: ["8000:8000"]
-    env_file: [.env]
-    depends_on: { postgis: { condition: service_healthy }, redis: { condition: service_started } }
-
-  frontend:
-    build: ./frontend
-    ports: ["3002:3000"]
-    environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
+    fe -->|REST & WebSockets| be
+    be --> db
+    be --> rd
 ```
 
-### Environment Configuration (`.env`)
+### Quickstart
+
 ```bash
-# Database & Cache
-DATABASE_URL=postgresql://postgres:postgres@postgis:5432/heatscape
-REDIS_URL=redis://redis:6379/0
-
-# Google Cloud Platform APIs
-GOOGLE_MAPS_API_KEY=AIzaSyAWFtUnxI2yjqyAyxf7ZHbEDi6L7-TomZw
-
-# Application Environment
-ENVIRONMENT=production
-CORS_ORIGINS=["http://localhost:3002", "http://localhost:3000"]
-```
-
-### Running Locally
-```bash
-# 1. Clone repository
+# 1. Clone the repository
 git clone https://github.com/jeeva-m-21/HeatScape-GCC.git
 cd HeatScape-GCC
 
-# 2. Launch Docker microservices
+# 2. Start all microservices
 docker compose up -d
 
-# 3. Verify container health
+# 3. Check that all containers are healthy
 docker compose ps
-
-# 4. View live applications:
-#    Frontend Dashboard: http://localhost:3002
-#    FastAPI Swagger UI: http://localhost:8000/docs
 ```
 
----
+### Accessing the Services
+* **Frontend Web App**: [http://localhost:3002](http://localhost:3002)
+* **Backend Interactive Swagger Docs**: [http://localhost:8000/docs](http://localhost:8000/docs)
+* **PostGIS Database**: `localhost:5432` (`postgres:postgres@localhost:5432/heatscape`)
+* **Redis Cache**: `localhost:6379`
 
-## 🧪 Verification & Testing
-
+### Running the Tests
 ```bash
-# Execute backend test suite (80+ unit and integration tests)
+# Run all 91 backend unit & integration tests (100% passing)
 docker exec heatscape_backend pytest tests/ -v
 
-# Run Next.js production build check
+# Run Next.js production build verification
 docker exec heatscape_frontend npm run build
-
-# Verify PostGIS 15-zone cell coverage
-docker exec heatscape_backend python3 -c "
-from app.core.database import SessionLocal
-from app.models.spatial import SpatialCell
-db = SessionLocal()
-print('Total Seeded Spatial Cells:', db.query(SpatialCell).count())
-"
 ```
 
 ---
 
-## 📜 Municipal Governance & Sovereign Standards
+## 📡 API Reference Overview
 
-- **Bilingual Tamil/English Interface**: Full linguistic parity supporting English and Tamil (தமிழ்) complying with Tamil Nadu Administrative Gazette standards.
-- **Open Standards**: Fully compatible with OGC API Features, STAC (SpatioTemporal Asset Catalog), and GeoJSON open geospatial standards.
-- **Tamil Nadu Climate Mission**: Engineered directly for GCC Special Projects Wing, CMDA (Chennai Metropolitan Development Authority), and the Tamil Nadu State Climate Change Council (TNSCCC).
+The FastAPI backend exposes clean, documented REST endpoints:
+
+* **`/api/v1/heat/cells/geojson`**: Streams 100m grid cell polygons with thermal anomalies, tree canopy, and built density.
+* **`/api/v1/heat/cells/{cell_id}/history`**: Retrieves 36-month time-series history for any cell.
+* **`/api/v1/heat/cells/{cell_id}/explain`**: Returns TreeSHAP biophysical root-cause attribution (vegetation vs. asphalt vs. buildings).
+* **`/api/v1/google/elevation`**: Returns live topographical elevation from the Google Elevation API.
+* **`/api/v1/google/air-quality`**: Returns live ambient air quality, PM2.5, and PM10 from the Google Air Quality API.
+* **`/api/v1/scenarios/optimize`**: Runs the MILP optimization solver for a user-specified budget and target wards.
+* **`/api/v1/scenarios/catalog`**: Catalogs cooling interventions mapped to the Tamil Nadu PWD 2024 Schedule of Rates.
+* **`/api/v1/hazard/heatwave-forecast`**: Returns 7-day IMD heatwave alert tiers (Green, Yellow, Orange, Red).
+* **`/api/v1/hazard/grap-status`**: Returns active GCC GRAP enforcement status (misting trucks, work halts).
+* **`/api/v1/routing/cool-path`**: Calculates shaded pedestrian routes avoiding high-heat streets.
+
+---
+
+## 🏛️ Civic & Sovereign Standards
+
+* **Bilingual Support**: Fully localized in both **English** and **Tamil (தமிழ்)** in compliance with Tamil Nadu Government administrative standards.
+* **Open GIS Standards**: Native support for GeoJSON, STAC (SpatioTemporal Asset Catalog), and OGC API Features.
+* **Actionable for GCC**: Directly outputs printable Council Briefing Memorandums and contractor-ready tender GeoJSON files for the Tamil Nadu Climate Change Mission.
